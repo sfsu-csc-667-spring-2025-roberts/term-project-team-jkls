@@ -5,23 +5,51 @@ import httpErrors from "http-errors";
 import morgan from "morgan"; 
 import * as path from "path"; 
 import pool from "../db";
-import rootRoutes from "./routes/root"; 
+import livereload from "livereload";
+import connectLivereload from "connect-livereload";
+import { setupSessions } from "./config/session";
+
 dotenv.config(); 
 const app = express(); 
 const PORT = process.env.PORT || 3000; 
+
+if (process.env.NODE_ENV !== "production") {
+  const reloadServer = livereload.createServer()
+
+  reloadServer.watch(path.join(process.cwd(), "public", "js"));
+
+  reloadServer.server.once("connection", () => {
+    setTimeout(() => {
+      reloadServer.refresh("/");
+    }, 100);
+  })
+
+  app.use(connectLivereload());
+}
+
+setupSessions(app);
+
+import * as routes from "./routes";
+import { sessionMiddleware } from "./middeware/auth";
+
 
 
 app.use(morgan("dev")); 
 app.use(express.json()); 
 
 app.use(express.urlencoded({ extended: false })); 
-app.use(express.static(path.join(process.cwd(), "src", 
-"public"))); 
+app.use(express.static(path.join(process.cwd(), "public")));
+
+
 app.use(cookieParser()); 
 app.set("views", path.join(process.cwd(), "src", "server", 
 "views")); 
 app.set("view engine", "ejs"); 
-app.use("/", rootRoutes); 
+
+// PAGES //
+app.use("/", routes.root); 
+app.use("/auth", routes.auth);
+app.use("/lobby", sessionMiddleware, routes.lobby);
 
 app.use((_request, _response, next) => { 
   next(httpErrors(404)); 
