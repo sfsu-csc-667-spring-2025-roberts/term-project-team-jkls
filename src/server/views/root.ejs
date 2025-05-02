@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <title>Hello</title>
+    <script src="/js/main.js" defer></script>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Hello <%= name %></p>
+
+    <script>
+      const socket = io();
+
+      socket.on("connect", () => {
+        console.log("Connected to server via socket:", socket.id);
+        socket.emit("chat", "Hello from client browser!");
+      });
+
+      socket.on("chat", (msg) => {
+        console.log("Received chat broadcast:", msg);
+      });
+    </script>
+  </body>
+</html>
