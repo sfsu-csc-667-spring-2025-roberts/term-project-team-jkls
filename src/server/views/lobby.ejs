@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lobby</title>
+        <%- include("./shared/head.ejs") %>
+    </head>
+    <body>
+        <%- include("./shared/header.ejs") %>
+        <h1>Lobby</h1>
+
+        <% if (locals.error && error !== undefined) { %>
+            <div class="error-message">
+                <%= error %>
+            </div>
+        <% } %>
+
+        <form action="/lobby" method="POST">
+            <label for="game">Select Game:</label>
+            <select id="game" name="game" required>
+                <!-- Add game options here -->
+            </select><br><br>
+            <button type="submit">Join Game</button>
+        </form>
+    </body>
