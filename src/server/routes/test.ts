@@ -1,7 +1,7 @@
 import express from "express";
 import { Request, Response } from "express";
 import type { Server } from "socket.io";
-import db from "../db/users/connection";
+import db from "../db/connection";
 
 const router = express.Router();
 

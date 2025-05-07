@@ -1,4 +1,4 @@
-import db from "./connection"
+import db from "../connection"
 import bcrypt from "bcrypt";
 
 export type User = {
