@@ -65,25 +65,17 @@ pool.query("SELECT NOW()")
   });
 
 
-import { createServer } from "http";
-import { Server as SocketIOServer } from "socket.io";
+  import { createServer } from "http";
+  import { Server as SocketIOServer } from "socket.io";
+  import setupSocket from "./config/socket";
+  
+  const httpServer = createServer(app);
+  const io = new SocketIOServer(httpServer);
+  
 
-const httpServer = createServer(app);
-const io = new SocketIOServer(httpServer);
-
-io.on("connection", (socket) => {
-  console.log("New user connected:", socket.id);
-
-  socket.on("chat", (msg) => {
-    console.log("Message from client:", msg);
-    io.emit("chat", msg);
+  setupSocket(io);
+  
+  httpServer.listen(PORT, () => {
+    console.log(`Server with socket.io running at http://localhost:${PORT}`);
   });
-
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
-  });
-});
-
-httpServer.listen(PORT, () => {
-  console.log(`Server with socket.io running at http://localhost:${PORT}`);
-});
+  
