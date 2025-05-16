@@ -1,24 +1,48 @@
 <html>
-  <head>
-    <title>Hello</title>
-    <script src="/js/main.js" defer></script>
-    <script src="/socket.io/socket.io.js"></script>
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Hello <%= name %></p>
 
-    <script>
-      const socket = io();
+<head>
+  <title>Home</title>
+  <script src="/js/main.js" defer></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <%- include('shared/head') %>
+</head>
 
-      socket.on("connect", () => {
-        console.log("Connected to server via socket:", socket.id);
-        socket.emit("chat", "Hello from client browser!");
-      });
+<body>
+  <div class="background-image">
+    <%- include('shared/header') %>
+    <div class="home-content">
+      <div class="home-content-container">
+        <h1 class="home-title">JKLS</h1>
+      <p class="home-desc">Play Poker with your friends!</p>
+      </div>
+      
+      <button class="play-button" id="home-play">Play Game</button>
+    </div>
+  </div>
 
-      socket.on("chat", (msg) => {
-        console.log("Received chat broadcast:", msg);
-      });
-    </script>
-  </body>
+
+  <script>
+  const socket = io();
+  const playButton = document.getElementById("home-play");
+  const currentUser = <%- JSON.stringify(currentUser) %>;
+
+  playButton.addEventListener("click", () => {
+    if (currentUser) {
+      window.location.href = "/lobby";
+    } else {
+      window.location.href = "/auth/login";
+    }
+  });
+
+    socket.on("connect", () => {
+      console.log("Connected to server via socket:", socket.id);
+      socket.emit("chat", "Hello from client browser!");
+    });
+
+    socket.on("chat", (msg) => {
+      console.log("Received chat broadcast:", msg);
+    });
+  </script>
+</body>
+
 </html>

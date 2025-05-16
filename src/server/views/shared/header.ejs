@@ -1,1 +1,9 @@
-<menu>This is the new header</menu>
+<nav class="navbar">
+  <a href="/">Home</a>
+
+  <% if (currentUser) { %>
+    <a href="/auth/logout">Logout</a>
+  <% } else { %>
+    <a href="/auth/login">Login</a>
+  <% } %>
+</nav>

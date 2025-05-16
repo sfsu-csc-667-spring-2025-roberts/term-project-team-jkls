@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-const sessionMiddleware = (request: Request, response: Response, next: NextFunction) => {
+const authMiddleware = (request: Request, response: Response, next: NextFunction) => {
     // @ts-ignore
     if(request.session.userId !== undefined) {
         // @ts-ignore
@@ -13,4 +13,4 @@ const sessionMiddleware = (request: Request, response: Response, next: NextFunct
 
 
 
-export {sessionMiddleware};
+export default authMiddleware;

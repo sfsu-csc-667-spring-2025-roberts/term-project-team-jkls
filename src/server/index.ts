@@ -1,81 +1,61 @@
-import cookieParser from "cookie-parser"; 
-import dotenv from "dotenv"; 
-import express from "express"; 
-import httpErrors from "http-errors"; 
-import morgan from "morgan"; 
-import * as path from "path"; 
-import pool from "../db";
-import livereload from "livereload";
-import connectLivereload from "connect-livereload";
-import { setupSessions } from "./config/session";
+import * as path from "path";
+import * as http from "http";
 
-dotenv.config(); 
-const app = express(); 
-const PORT = process.env.PORT || 3000; 
+import express from "express";
+import httpErrors from "http-errors";
+import morgan from "morgan";
+import cookieParser from "cookie-parser";
+import { Server } from "socket.io";
 
-if (process.env.NODE_ENV !== "production") {
-  const reloadServer = livereload.createServer({ port: 35730 });
+import dotenv from "dotenv";
+dotenv.config();
 
-
-  reloadServer.watch(path.join(process.cwd(), "public", "js"));
-
-  reloadServer.server.once("connection", () => {
-    setTimeout(() => {
-      reloadServer.refresh("/");
-    }, 100);
-  })
-
-  app.use(connectLivereload());
-}
-
-setupSessions(app);
-
+import * as config from "./config";
 import * as routes from "./routes";
-import { sessionMiddleware } from "./middeware/auth";
+import * as middleware from "./middeware";
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+const sessionMw = config.session(app);
+app.use(sessionMw)
+config.socket(io, app, sessionMw);
+
+const PORT = process.env.PORT || 3000;
 
 
 
-app.use(morgan("dev")); 
-app.use(express.json()); 
+app.use(middleware.currentUser);
+app.use(middleware.room);
+config.liveReload(app);
 
-app.use(express.urlencoded({ extended: false })); 
+
+app.use(morgan("dev"));
+app.use(cookieParser());
+app.use(express.json());
+app.use(
+  express.urlencoded({
+    extended: false,
+  }),
+);
+
 app.use(express.static(path.join(process.cwd(), "public")));
+app.use(middleware.room);
 
+app.set("views", path.join(process.cwd(), "src", "server", "views"));
+app.set("view engine", "ejs");
 
-app.use(cookieParser()); 
-app.set("views", path.join(process.cwd(), "src", "server", 
-"views")); 
-app.set("view engine", "ejs"); 
-
-// PAGES //
-app.use("/", routes.root); 
+app.use("/", routes.root);
 app.use("/auth", routes.auth);
-app.use("/lobby", sessionMiddleware, routes.lobby);
+app.use("/chat", middleware.auth, routes.chat);
+app.use("/lobby", middleware.auth, routes.lobby);
+// app.use("/games", middleware.auth, routes.games);
 
-app.use((_request, _response, next) => { 
-  next(httpErrors(404)); 
-}); 
+app.use((_request, _response, next) => {
+  next(httpErrors(404));
+});
 
-pool.query("SELECT NOW()")
-  .then(result => {
-    console.log("Connected to DB. Server time:", result.rows[0].now);
-  })
-  .catch(err => {
-    console.error("Couldn't connect to database:", err);
-  });
-
-
-  import { createServer } from "http";
-  import { Server as SocketIOServer } from "socket.io";
-  import setupSocket from "./config/socket";
-  
-  const httpServer = createServer(app);
-  const io = new SocketIOServer(httpServer);
-  
-
-  setupSocket(io);
-  
-  httpServer.listen(PORT, () => {
-    console.log(`Server with socket.io running at http://localhost:${PORT}`);
-  });
-  
+server.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
