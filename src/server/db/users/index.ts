@@ -7,9 +7,9 @@ export type User = {
     password: string;
 }
 
-const register = async (email: string, password: string) => {
+const register = async (email: string, password: string, username: string) => {
     const encryptedPassword = await bcrypt.hash(password, 10);
-    const {id } = await db.one("INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id", [email, encryptedPassword])
+    const {id } = await db.one("INSERT INTO users (email, password, username) VALUES ($1, $2, $3) RETURNING id", [email, encryptedPassword, username]);
 
     return id;
 };

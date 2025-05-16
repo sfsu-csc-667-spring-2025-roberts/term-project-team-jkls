@@ -4,7 +4,7 @@ import { getPlayerGames } from "./get-player-games";
 const router = express.Router();
 
 router.get("/", async (request: Request, response: Response) => {
-  const { id: userId } = request.session.userId!;
+  const { id: userId } = request.session.user!;
 
   const { availableGames, currentGames } = await getPlayerGames(userId);
 

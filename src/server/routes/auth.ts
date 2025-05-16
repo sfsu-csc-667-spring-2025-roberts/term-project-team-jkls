@@ -11,10 +11,10 @@ router.get("/register", async (request: Request, response: Response) => {
 });
 
 router.post("/register", async (request: Request, response: Response) => {
-    const { email, password } = request.body;
+    const { email, password, username } = request.body;
 
     try {
-        const userId = await User.register(email, password);
+        const userId = await User.register(email, password, username);
 
         // @ts-ignore
         request.session.userId = userId; // Store userId in session
