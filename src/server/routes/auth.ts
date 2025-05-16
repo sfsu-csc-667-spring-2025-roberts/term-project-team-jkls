@@ -41,11 +41,8 @@ router.post("/login", async (request: Request, response: Response) => {
          // @ts-ignore
          request.session.userId = userId; // Store userId in session
 
-         console.log("User ID:", userId); // Log the user ID for debugging
-
-         console.log("SUCCESSFUL LOGIN")
-
          response.redirect("/lobby")
+         console.log("Redirecting to /lobby")
     } catch (error) {
         response.render("auth/login", { error: "Invalid email or password" });
     }

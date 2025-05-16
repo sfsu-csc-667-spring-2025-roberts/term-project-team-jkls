@@ -1,26 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Lobby</title>
-        <%- include("./shared/head.ejs") %>
-    </head>
-    <body>
-        <%- include("./shared/header.ejs") %>
-        <h1>Lobby</h1>
 
-        <% if (locals.error && error !== undefined) { %>
-            <div class="error-message">
-                <%= error %>
-            </div>
-        <% } %>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobby</title>
+    <%- include("./shared/head") %>
+</head>
 
-        <form action="/lobby" method="POST">
-            <label for="game">Select Game:</label>
-            <select id="game" name="game" required>
-                <!-- Add game options here -->
-            </select><br><br>
-            <button type="submit">Join Game</button>
-        </form>
-    </body>
+<body>
+    <div class="background-image">
+        <%- include("./shared/header") %>
+            <h1 class="lobby-title">Lobby</h1>
+
+            <% if (locals.error && error !==undefined) { %>
+                <div class="error-message">
+                    <%= error %>
+                </div>
+                <% } %>
+
+                    <form class="game-select-form" action="/lobby" method="POST">
+                        <div class="select-game-group">
+                            <label for="game" class="option-text">Join a Lobby:</label>
+                            <select id="game" name="game" required>
+                                <option value="" disabled selected>Select a game</option>
+                                <!-- Add game options here -->
+                            </select>
+                        </div>
+                        <button type="submit" id="join-game" class="join-game" disabled>Join Game</button>
+                        <button type="button" id="create-game" class="create-game" disabled>Create Game</button>
+                    </form>
+
+                    <%- include('shared/chat') %>
+    </div>
+<%- include('shared/templates') %>
+    <script>
+        const selectGame = document.getElementById("game");
+        const joinButton = document.getElementById("join-game");
+
+        selectGame.addEventListener("change", () => {
+            joinButton.disabled = !selectGame.value;
+        });
+
+    </script>
+</body>

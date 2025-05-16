@@ -4,8 +4,220 @@
     padding: 0;
 }
 
+html {
+    overflow-y: hidden;
+}
+
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f4f4f4;
-    color: #333;
+}
+
+.background-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-image: url('../assets/background.png');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    width: 100%;
+}
+
+.home-title {
+    font-size: 10em;
+    margin-top: -100px;
+    text-align: center;
+    font-family: "Coral Pixels", serif;
+  font-weight: 100;
+  font-style: normal;
+    color: #fff;
+}
+
+.home-desc {
+    font-size: 2.5em;
+    text-align: center;
+    font-family: "Russo One", sans-serif;
+    color: #fff;
+}
+
+.home-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.home-content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 40px;
+}
+
+.navbar {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 1.2em;
+}
+
+.navbar a:hover {
+    color: #ff6347;
+    transition: 0.1s;
+}
+
+.play-button {
+    padding: 10px 20px;
+    background-color: #ff8b77;
+    color: #fff;
+    border-radius: 25px;
+    font-size: 3em;
+    cursor: pointer;
+}
+
+.play-button:hover {
+    background-color: #ff4500;
+    transition: 0.15s;
+}
+
+
+
+/* LOBBY */
+
+.lobby-title {
+    font-size: 4em;
+    text-align: center;
+    font-family: "Russo One", sans-serif;
+    color: #fff;
+    margin-top: 20px;
+}
+
+.option-text {
+    font-size: 1.5em;
+    font-weight: 300;
+    text-align: center;
+    font-family: "Russo One", sans-serif;
+    color: #fff;
+}
+
+.game-select-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.select-game-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.join-game {
+    padding: 10px 20px;
+    background-color: #ff8b77;
+    color: #fff;
+    border-radius: 25px;
+    font-size: 3em;
+    cursor: pointer;
+    margin-bottom: 20px;
+    margin-top: 12px;
+}
+
+.join-game:hover {
+    background-color: #ff4500;
+    transition: 0.15s;
+}
+
+.join-game:disabled {
+    background-color: #6b6b6b;
+    cursor: not-allowed;
+}
+
+.create-game {
+    padding: 10px 20px;
+    background-color: #22989c;
+    color: #fff;
+    border-radius: 25px;
+    font-size: 3em;
+    cursor: pointer;
+    margin-bottom: 20px;
+    margin-top: 12px;
+}
+
+.create-game:hover {
+    background-color: #28b6ba;
+    transition: 0.15s;
+}
+
+
+
+/* CHAT */
+
+#chat {
+    width: 30%;
+    background-color: #b5ffbf50;
+    position: absolute;
+    bottom: 0;
+    height: 30%;
+    right: 0;
+}
+
+#messages {
+    height: 85%;
+    overflow-y: scroll;
+    
+}
+
+#message-input {
+    width: 100%;
+    padding: 2px;
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 1.2em;
+    outline: none;
+    border-radius: 25px;
+}
+
+#chat-form {
+    width: 100%;
+    display: flex;
+    height:auto;
+}
+
+
+#send-button {
+    padding: 4px 10px;
+    background-color: #22989c;
+    color: #000000;
+    border-radius: 25px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.chat-message-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.message-container {
+    background-color: #fff;
+    margin: 10px 10px;
+    padding: 10px 8px;
+    border-radius: 10px;
 }

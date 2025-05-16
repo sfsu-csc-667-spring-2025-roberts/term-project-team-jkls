@@ -1,29 +1,24 @@
-import connectPgSimple from "connect-pg-simple";
 import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
 import type { Express, RequestHandler } from "express";
 
-let middleware: RequestHandler | undefined = undefined
+let sessionMiddleware: RequestHandler;
 
-const setupSessions = (app: Express) => {
-    const pgSession = connectPgSimple(session)
+const configureSession = (app: Express) => {
+  const store = new (connectPgSimple(session))({
+    createTableIfMissing: true,
+  });
 
-    if (middleware === undefined) {
-        middleware = session({
-            store: new pgSession({
-                createTableIfMissing: true, 
-            }),
-            secret: process.env.SESSION_SECRET!,
-            resave: true,
-            saveUninitialized: false,
-        })
+  sessionMiddleware = session({
+    store,
+    secret: process.env.SESSION_SECRET!,
+    resave: false,
+    saveUninitialized: false,
+  });
 
-        app.use(middleware)
-    }
+  app.use(sessionMiddleware);
+  return sessionMiddleware;
+};
 
-
-
-    return middleware
-}
-
-
-export {setupSessions};
+export default configureSession;
+export { sessionMiddleware };

@@ -4,7 +4,7 @@ import pool from "../../db";
 const router = express.Router();
 
 router.get("/", (_request, response) => { 
-  response.render("root", { name: "Home", title: "Login page" }); 
+  response.render("root"); 
 }); 
 
 router.get("/db-test", async (_req, res) => {

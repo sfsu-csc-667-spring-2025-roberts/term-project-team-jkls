@@ -52,6 +52,7 @@
     "express": "^5.1.0",
     "express-session": "^1.18.1",
     "http-errors": "^2.0.0",
+    "husky": "^9.1.7",
     "morgan": "^1.10.0",
     "node-pg-migrate": "^7.9.1",
     "pg": "^8.15.6",

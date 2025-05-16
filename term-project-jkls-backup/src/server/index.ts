@@ -30,7 +30,7 @@ if (process.env.NODE_ENV !== "production") {
 setupSessions(app);
 
 import * as routes from "./routes";
-import { sessionMiddleware } from "./middeware/auth";
+import authMiddleware from "./middeware/auth";
 
 
 
@@ -49,7 +49,7 @@ app.set("view engine", "ejs");
 // PAGES //
 app.use("/", routes.root); 
 app.use("/auth", routes.auth);
-app.use("/lobby", sessionMiddleware, routes.lobby);
+app.use("/lobby", authMiddleware, routes.lobby);
 
 app.use((_request, _response, next) => { 
   next(httpErrors(404)); 
