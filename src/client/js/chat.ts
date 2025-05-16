@@ -19,6 +19,10 @@ socket.on(
       "div span:last-of-type",
     )!.innerText = new Date(timestamp).toLocaleTimeString();
 
+    container.querySelector<HTMLSpanElement>(
+      "div p:first-of-type",
+    )!.innerText = sender.username;
+
     Ui.CHAT_MESSAGES.appendChild(container);
 
     Ui.CHAT_MESSAGES?.scrollTo({

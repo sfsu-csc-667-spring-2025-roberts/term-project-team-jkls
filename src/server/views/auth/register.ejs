@@ -17,13 +17,22 @@
             </div>
         <% } %>
 
-        <form action="/auth/register" method="POST">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required><br><br>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required><br><br>
-            <button type="submit">Register</button>
+        <form class="login-form" action="/auth/register" method="POST">
+            <div class="auth-form-group">
+                <label for="username" class="auth-label">Username:</label>
+                <input type="text" class="auth-input" id="username" name="username" required>
+            </div>
+            <div class="auth-form-group">
+                <label for="email" class="auth-label">Email:</label>
+                <input type="email" class="auth-input" id="email" name="email" required>
+            </div>
+            <div class="auth-form-group">
+                <label for="password" class="auth-label">Password:</label>
+                <input type="password" class="auth-input" id="password" name="password" required>
+            </div>
+            <button class="login-button" type="submit">Register</button>
         </form>
+        <p class="auth-create-account">Already have an account? <a href="/auth/login">Login here</a></p>
         </div>
     </body>
 </html>
