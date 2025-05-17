@@ -37,7 +37,7 @@ router.get("/promise_version", (request: Request, response: Response) => {
 router.post("/socket-test", (request: Request, response: Response) => {
   const io = request.app.get("io");
   // @ts-ignore
-  const { id } = request.session.userId;
+  const { id } = request.session.user;
 
   if (io) {
     console.log("io not null");

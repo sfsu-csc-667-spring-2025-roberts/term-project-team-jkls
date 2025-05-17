@@ -14,10 +14,10 @@ router.post("/register", async (request: Request, response: Response) => {
     const { email, password } = request.body;
 
     try {
-        const userId = await User.register(email, password);
+        const user = await User.register(email, password);
 
         // @ts-ignore
-        request.session.userId = userId; // Store userId in session
+        request.session.user = user; // Store user in session
 
 
         response.redirect("/lobby")
@@ -36,12 +36,12 @@ router.post("/login", async (request: Request, response: Response) => {
     const { email, password } = request.body;
 
     try {
-        const userId = await User.login(email, password);
+        const user = await User.login(email, password);
 
          // @ts-ignore
-         request.session.userId = userId; // Store userId in session
+         request.session.user = user; // Store user in session
 
-         console.log("User ID:", userId); // Log the user ID for debugging
+         console.log("User ID:", user); // Log the user ID for debugging
 
          console.log("SUCCESSFUL LOGIN")
 
@@ -53,7 +53,7 @@ router.post("/login", async (request: Request, response: Response) => {
 
 router.get("/logout", async (request: Request, response: Response) => {
     // @ts-ignore
-    request.session.userId = null; // Clear userId from session
+    request.session.user = null; // Clear user from session
 
     request.session.destroy(() => {
         response.redirect("/")

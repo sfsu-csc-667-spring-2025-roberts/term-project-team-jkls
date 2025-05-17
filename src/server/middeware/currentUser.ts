@@ -6,6 +6,6 @@ export default function currentUser(
   res: Response,
   next: NextFunction,
 ) {
-  res.locals.currentUser = (req.session as any)?.userId ?? null;
+  res.locals.currentUser = (req.session as any)?.user ?? null;
   next();
 }
