@@ -19,6 +19,7 @@ const configureSockets = (
       socket.disconnect();
       return;
     }
+
     console.log(`User [${user.id}] connected with session id ${id}`);
     socket.join(`${user.id}`);
 
