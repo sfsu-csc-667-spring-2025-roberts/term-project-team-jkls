@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from "express";
 
 const authMiddleware = (request: Request, response: Response, next: NextFunction) => {
     // @ts-ignore
-    if(request.session.userId !== undefined) {
+    if(request.session.user !== undefined) {
         // @ts-ignore
-        response.locals.userId = request.session.userId;
+        response.locals.user = request.session.user;
         next(); 
     } else {
         response.redirect("/auth/login")

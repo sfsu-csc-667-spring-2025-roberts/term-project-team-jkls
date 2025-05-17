@@ -6,9 +6,9 @@ const authMiddleware = (
   next: NextFunction,
 ) => {
   // @ts-ignore
-  if (request.session.userId) {
+  if (request.session.user) {
     // @ts-ignore
-    response.locals.user = request.session.userId;
+    response.locals.user = request.session.user;
 
     next();
   } else {

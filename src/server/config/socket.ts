@@ -12,14 +12,19 @@ const configureSockets = (
 
   io.on("connection", (socket) => {
     // @ts-ignore
-    const { userId, id } = socket.request.session;
+    const { user, id } = socket.request.session;
 
-    console.log(`User [${userId}] connected with session id ${id}`);
-    socket.join(`${userId}`);
+    if (!user) {
+      console.log("User not authenticated");
+      socket.disconnect();
+      return;
+    }
+    console.log(`User [${user.id}] connected with session id ${id}`);
+    socket.join(`${user.id}`);
 
     socket.on("disconnect", () => {
-      console.log(`User [${userId}] disconnected`);
-      socket.leave(`${userId}`);
+      console.log(`User [${user.id}] disconnected`);
+      socket.leave(`${user.id}`);
     });
   });
 };
