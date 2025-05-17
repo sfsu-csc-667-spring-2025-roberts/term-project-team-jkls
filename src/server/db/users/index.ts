@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 
 export type User = {
     id: number;
+    username: string;
     email: string;
     password: string;
 }
@@ -20,7 +21,7 @@ const login = async (email: string, password: string) => {
     const passwordsMatch = await bcrypt.compare(password, user.password)
 
     if (passwordsMatch) {
-        return user.id;
+        return user
     } else {
         throw new Error("Invalid password")
     }

@@ -14,12 +14,12 @@ const configureSockets = (
     // @ts-ignore
     const { userId, id } = socket.request.session;
 
-    console.log(`User [${userId}] connected with session id ${id}`);
-    socket.join(`${userId}`);
+    console.log(`User [${userId.id}] connected with session id ${id}`);
+    socket.join(`${userId.id}`);
 
     socket.on("disconnect", () => {
-      console.log(`User [${userId}] disconnected`);
-      socket.leave(`${userId}`);
+      console.log(`User [${userId.id}] disconnected`);
+      socket.leave(`${userId.id}`);
     });
   });
 };
