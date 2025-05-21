@@ -1,9 +1,15 @@
 <nav class="navbar">
   <a href="/">Home</a>
 
-  <% if (currentUser) { %>
-    <a href="/auth/logout">Logout</a>
-  <% } else { %>
-    <a href="/auth/login">Login</a>
-  <% } %>
+  <div class="navbar-right">
+    <% if (currentUser && currentUser.profile_pic) { %>
+      <img src="/images/<%= currentUser.profile_pic %>" class="profile-picture">
+    <% } %>
+
+    <% if (currentUser) { %>
+      <a href="/auth/logout">Logout</a>
+    <% } else { %>
+      <a href="/auth/login">Login</a>
+    <% } %>
+  </div>
 </nav>

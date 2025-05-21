@@ -1,20 +1,33 @@
+import multer from "multer";
+import path from "path";
 import express from "express"; 
 import { Request, Response } from "express";
 
 import User from '../db/users'
 
 const router = express.Router();
-
-
-router.get("/register", async (request: Request, response: Response) => {
-    response.render("auth/register")
+const storage = multer.diskStorage({
+  destination: function (_req, _file, cb) {
+    cb(null, "public/images");
+  },
+  filename: function (_req, file, cb) {
+    const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueName + path.extname(file.originalname));
+  }
 });
 
-router.post("/register", async (request: Request, response: Response) => {
-    const { email, password, username } = request.body;
+const upload = multer({ storage });
 
+router.get("/register", async (_req: Request, res: Response) => {
+  res.render("auth/register");
+});
+
+
+router.post("/register", upload.single("profilePic"), async (request: Request, response: Response) => {
+    const { email, password, username } = request.body;
+     const profilePic = request.file?.filename || "default.png";
     try {
-        const user = await User.register(email, password, username);
+        const user = await User.register(email, password, username,profilePic);
 
         // @ts-ignore
         request.session.user = user; // Store user in session
