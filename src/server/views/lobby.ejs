@@ -13,6 +13,23 @@
     <div class="background-image">
         <%- include("./shared/header") %>
             <h1 class="lobby-title">Lobby</h1>
+            <ul id="my-games">
+                <% for(let i=0; i < currentGames.length; i++) { const game=currentGames[i]; %>
+                    <li>
+                        <span class="game-name">
+                            <%= game.name.length !==0 ? game.name : `Game ${game.id}`%>
+                        </span>
+                        <span class="game-status">
+                            <% if(game.player_count) { %>
+                                <%= game.player_count %> / <%= game.max_players %> players
+                                        <% } else { %>
+                                            Players: unknown
+                                            <% } %>
+                        </span>
+                        <a href="/games/<%= game.id %>" class="return-button" target="_blank">Return</a>
+                    </li>
+                    <% } %>
+            </ul>
 
             <% if (locals.error && error !==undefined) { %>
                 <div class="error-message">
@@ -20,15 +37,17 @@
                 </div>
                 <% } %>
 
-                    <form class="game-select-form" action="/lobby" method="POST">
+                    <form id="game-select-form" class="game-select-form" method="POST" action="/lobby">
                         <div class="select-game-group">
                             <label for="game" class="option-text">Join a Lobby:</label>
                             <select id="game" name="game" required>
                                 <option value="" disabled selected>Select a game</option>
                                 <% if (locals.availableGames && availableGames.length> 0) { %>
                                     <% availableGames.forEach((game)=> { %>
-                                        <option value="<%= game.id %>">
-                                            <%= game.description ? game.description : `Room-${game.id}` %>
+                                        <option value="<%= game.id %>"
+                                            data-has-password="<%= game.password && game.password.trim().length > 0 %>">
+                                            <%= game.name ? game.name : `Room-${game.id}` %> - <%= game.player_count ?
+                                                    game.player_count : 0 %>/<%= game.max_players %> players
                                         </option>
                                         <% }) %>
                                             <% } else { %>
@@ -36,21 +55,97 @@
                                                 <% } %>
                             </select>
                         </div>
+
+                        <div id="password-field" style="display: none;">
+                            <input type="text" name="password" id="password" placeholder="Enter game password"
+                                class="auth-input">
+                        </div>
+
                         <button type="submit" id="join-game" class="join-game" disabled>Join Game</button>
                         <button type="button" id="create-game" class="create-game">Create Game</button>
                     </form>
 
                     <%- include('shared/chat') %>
     </div>
+
+    <script>
+        const selectGame = document.getElementById("game");
+        const joinButton = document.getElementById("join-game");
+        const gameForm = document.getElementById("game-select-form");
+        const passwordField = document.getElementById("password-field");
+        const passwordInput = document.getElementById("password");
+
+        let selectedGameRequiresPassword = false;
+        let currentGameId = null;
+        let passwordDebounceTimer = null;
+
+        selectGame.addEventListener("change", () => {
+            const gameId = selectGame.value;
+            currentGameId = gameId;
+
+            if (gameId) {
+                gameForm.action = `/games/join/${gameId}`;
+
+                const selectedOption = selectGame.options[selectGame.selectedIndex];
+                selectedGameRequiresPassword = selectedOption.getAttribute('data-has-password') === "true";
+
+                passwordField.style.display = selectedGameRequiresPassword ? 'block' : 'none';
+
+                joinButton.disabled = selectedGameRequiresPassword ? true : false;
+
+                passwordInput.value = '';
+            } else {
+                gameForm.action = "/lobby";
+                passwordField.style.display = 'none';
+                joinButton.disabled = true;
+                selectedGameRequiresPassword = false;
+            }
+        });
+
+        passwordInput.addEventListener("input", () => {
+            if (selectedGameRequiresPassword && currentGameId) {
+                joinButton.disabled = true; // Disable while checking
+
+                if (passwordDebounceTimer) {
+                    clearTimeout(passwordDebounceTimer);
+                }
+
+                passwordDebounceTimer = setTimeout(() => {
+                    const passwordText = passwordInput.value.trim();
+
+                    if (passwordText) {
+                        validatePassword(currentGameId, passwordText);
+                    }
+                }, 500);
+            }
+        });
+
+        function validatePassword(gameId, password) {
+            fetch(`/games/${gameId}/validate-password`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ password })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    joinButton.disabled = !data.valid;
+
+                    if (data.valid) {
+                        passwordInput.classList.add('valid-password');
+                        passwordInput.classList.remove('invalid-password');
+                    } else {
+                        passwordInput.classList.add('invalid-password');
+                        passwordInput.classList.remove('valid-password');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error validating password:', error);
+                    joinButton.disabled = true;
+                });
+        }
+    </script>
     <%- include('games/create-form') %>
         <%- include('shared/templates') %>
-            <script>
-                const selectGame = document.getElementById("game");
-                const joinButton = document.getElementById("join-game");
-
-                selectGame.addEventListener("change", () => {
-                    joinButton.disabled = !selectGame.value;
-                });
-
-            </script>
 </body>
