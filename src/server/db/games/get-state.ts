@@ -37,10 +37,9 @@ export const getState = async (gameId: number): Promise<GameState> => {
   const { name } = await getInfo(gameId);
 
   const players = (await getPlayers(gameId)).map(
-    ({ id, email, gravatar, seat, is_current: isCurrent }) => ({
+    ({ id, email, seat, is_current: isCurrent }) => ({
       id,
       email,
-      gravatar,
       seat,
       isCurrent,
     }),

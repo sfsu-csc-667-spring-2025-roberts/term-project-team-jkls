@@ -4,7 +4,6 @@ export type User = {
   id: number;
   username: string;
   email: string;
-  gravatar: string;
   profile_pic: string;
 };
 
@@ -38,7 +37,6 @@ export type Card = {
 export type Player = {
   id: number;
   email: string;
-  gravatar: string;
   seat: number;
   isCurrent: boolean;
 };

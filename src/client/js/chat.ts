@@ -9,13 +9,9 @@ socket.on(
     const container = cloneTemplate<HTMLDivElement>("#chat-message-template");
 
   const img = container.querySelector<HTMLImageElement>("img")!;
-if (sender.profile_pic) {
-  img.src = `/images/${sender.profile_pic}`;
+  img.src = `/images/${sender.profile_pic || 'default.png'}`;
   img.alt = `Profile picture for ${sender.username}`;
-} else {
-  img.src = `https://gravatar.com/avatar/${sender.gravatar}?d=identicon`;
-  img.alt = `Gravatar for ${sender.email}`;
-}
+
     container.querySelector<HTMLSpanElement>(
       "div span:first-of-type",
     )!.innerText = message;
