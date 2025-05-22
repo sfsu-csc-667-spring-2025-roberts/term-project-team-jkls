@@ -2,7 +2,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Skip-bo | Lobby</title>
+  <title>Lobby</title>
   <%- include('shared/head') %>
     <script src="/js/game.js" defer></script>
 </head>
@@ -12,7 +12,7 @@
     <%- include('shared/templates') %>
       <div id="game-container">
         <%- include('shared/header') %>
-          <div id="content">
+          <div id="game-area-content">
             <section id="game-table">
               <%- include('games/waiting-to-start-overlay') %>
                 <% if(!hasStarted) { %>

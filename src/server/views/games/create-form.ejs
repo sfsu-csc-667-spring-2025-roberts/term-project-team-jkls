@@ -1,6 +1,7 @@
 <div id="create-game-container">
   <form class="create-game-form-container" method="post" action="/games/create">
     <a href="#" id="close-create-game-form">
+      <!-- NEED TO ADD ICON HERE -->
       <i class="nf nf-md-close_circle_outline"></i>
     </a>
     <div class="auth-form-group">
@@ -15,11 +16,11 @@
     </div>
     <div class="auth-form-group">
       <label class="create-label" for="min-players">Min players</label>
-      <input type="number" id="min-players" name="minPlayers" value="2" class="create-game-input" />
+      <input type="number" id="min-players" max="4" min="2" name="minPlayers" value="2" class="create-game-input" />
     </div>
     <div class="auth-form-group">
       <label class="create-label" for="max-players">Max players</label>
-      <input type="number" id="max-players" name="maxPlayers" value="4" class="create-game-input" />
+      <input type="number" id="max-players" max="4" name="maxPlayers" value="4" class="create-game-input" />
     </div>
     <div class="auth-form-group">
       <label class="create-label" for="password">Password</label>
