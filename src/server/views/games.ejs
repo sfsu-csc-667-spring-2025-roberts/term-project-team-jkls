@@ -1,0 +1,83 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Lobby</title>
+  <%- include('shared/head') %>
+    <script src="/js/game.js" defer></script>
+</head>
+
+<body id="games-body">
+  <div class="background-image">
+    <%- include('shared/templates') %>
+      <div id="game-container">
+        <%- include('shared/header') %>
+          <div id="game-area-content">
+            <section id="game-table">
+              <%- include('games/waiting-to-start-overlay') %>
+                <% if(!hasStarted) { %>
+                  <div id="play-area"></div>
+                  <% } else { %>
+                    <div id="play-area" class="started"></div>
+                    <% } %>
+            </section>
+
+            <template id="draw-pile-area-template">
+              <div class="center-area">
+                <div class="draw-pile">
+                  <div class="card back">Deck</div>
+                </div>
+                <div class="build-piles">
+                  <div class="build-pile" data-pile-id="<%= piles.NORTH_PILE %>"></div>
+                  <div class="build-pile" data-pile-id="<%= piles.EAST_PILE %>"></div>
+                  <div class="build-pile" data-pile-id="<%= piles.SOUTH_PILE %>"></div>
+                  <div class="build-pile" data-pile-id="<%= piles.WEST_PILE %>"></div>
+                </div>
+              </div>
+            </template>
+
+            <template id="card-number-template">
+              <div class="card number-card" data-number="" data-card-id="">
+                <div class="card-inner">
+                  <div class="card-number"></div>
+                </div>
+              </div>
+            </template>
+
+            <template id="card-skipbo-template">
+              <div class="card skipbo" data-card-id="">
+                <div class="card-inner">
+                  <div class="starburst"></div>
+                  <div class="card-number">Skip-Bo</div>
+                </div>
+              </div>
+            </template>
+
+            <template id="player-template">
+              <div class="player">
+                <div class="player-area">
+                  <div class="hand">
+                    <div class="hand-count"></div>
+                  </div>
+                  <div class="piles">
+                    <div class="stock-pile">
+                      <div class="count"></div>
+                    </div>
+                    <div class="discard-area">
+                      <div class="discard-pile" data-discard-pile="2"></div>
+                      <div class="discard-pile" data-discard-pile="3"></div>
+                      <div class="discard-pile" data-discard-pile="4"></div>
+                      <div class="discard-pile" data-discard-pile="5"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+
+            <%- include('shared/chat') %>
+          </div>
+      </div>
+  </div>
+</body>
+
+</html>
