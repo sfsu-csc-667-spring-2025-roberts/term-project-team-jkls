@@ -11,6 +11,8 @@ const config: webpack.Configuration = {
     entry: {
         main: path.join(process.cwd(), 'src','client', 'index.ts'),
         chat: path.join(process.cwd(), "src", "client", "js", "chat.ts"),
+        game: path.join(process.cwd(), "src", "client", "js", "games.ts"),
+        lobby: path.join(process.cwd(), "src", "client", "js", "lobby.ts"),
     },
     output: {
         path: path.join(process.cwd(), 'public', 'js'),
@@ -20,7 +22,7 @@ const config: webpack.Configuration = {
         rules: [{ test: /\.ts$/, use: 'ts-loader', exclude: /node_modules/ }],
     },
     resolve: {
-    extensions: [".ts", ".js"],   // ← NEW
+    extensions: [".ts", ".js"],
   },
 };
 
