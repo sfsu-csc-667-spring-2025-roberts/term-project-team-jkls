@@ -121,34 +121,34 @@
         });
 
         function validatePassword(gameId, password) {
-        
-        fetch(`/games/${gameId}/validate-password`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ password })
-        })
-            .then(response => {
-                console.log("Response status:", response.status);
-                return response.json();
+
+            fetch(`/games/${gameId}/validate-password`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ password })
             })
-            .then(data => {
-                joinButton.disabled = !data.valid;
-            
-                if (data.valid) {
-                    passwordInput.classList.add('valid-password');
-                    passwordInput.classList.remove('invalid-password');
-                } else {
-                    passwordInput.classList.add('invalid-password');
-                    passwordInput.classList.remove('valid-password');
-                }
-            })
-            .catch(error => {
-                console.error('Error validating password:', error);
-                joinButton.disabled = true;
-            });
-    }
+                .then(response => {
+                    console.log("Response status:", response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    joinButton.disabled = !data.valid;
+
+                    if (data.valid) {
+                        passwordInput.classList.add('valid-password');
+                        passwordInput.classList.remove('invalid-password');
+                    } else {
+                        passwordInput.classList.add('invalid-password');
+                        passwordInput.classList.remove('valid-password');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error validating password:', error);
+                    joinButton.disabled = true;
+                });
+        }
     </script>
     <%- include('games/create-form') %>
         <%- include('shared/templates') %>
