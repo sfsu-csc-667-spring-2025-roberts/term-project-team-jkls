@@ -13,6 +13,8 @@ AND $1 NOT IN (
 )`;
 
 export const getAvailableGames = async (userId: number) => {
-  // any game that has less than max players that userId isnt in
+ 
+  const games = await db.any(SQL, [userId]);
+
   return db.any(SQL, [userId]);
 };
