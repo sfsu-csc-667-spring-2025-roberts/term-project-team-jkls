@@ -6,8 +6,11 @@ const router = express.Router();
 router.post("/:roomId", (request: Request, response: Response) => {
   const { roomId } = request.params;
   const { message } = request.body;
-  // @ts-ignore
-  const { id, email, username, gravatar,profile_pic } = request.session.user;
+  if (!request.session.user) {
+    response.status(401).send("Not logged in");
+    return;
+  }
+  const { id, email, username, profile_pic } = request.session.user;
   const io = request.app.get("io");
 
   if (!io) {
@@ -28,7 +31,6 @@ router.post("/:roomId", (request: Request, response: Response) => {
       id,
       username,
       email,
-      gravatar,
       profile_pic
     },
     timestamp: new Date(),
