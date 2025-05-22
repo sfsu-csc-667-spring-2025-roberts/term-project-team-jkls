@@ -17,7 +17,8 @@
             </div>
         <% } %>
 
-        <form class="login-form" action="/auth/register" method="POST">
+        <form class="login-form" action="/auth/register" method="POST" enctype="multipart/form-data">
+
             <div class="auth-form-group">
                 <label for="username" class="auth-label">Username:</label>
                 <input type="text" class="auth-input" id="username" name="username" required>
@@ -29,6 +30,10 @@
             <div class="auth-form-group">
                 <label for="password" class="auth-label">Password:</label>
                 <input type="password" class="auth-input" id="password" name="password" required>
+            </div>
+            <div class="auth-form-group">
+                <label for="profilePic" class="auth-label">Profile Picture:</label>
+                <input type="file" class="auth-input" id="profilePic" name="profilePic" accept="image/*">
             </div>
             <button class="login-button" type="submit">Register</button>
         </form>

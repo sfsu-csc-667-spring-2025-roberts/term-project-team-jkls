@@ -7,7 +7,7 @@ router.post("/:roomId", (request: Request, response: Response) => {
   const { roomId } = request.params;
   const { message } = request.body;
   // @ts-ignore
-  const { id, email, username, gravatar } = request.session.user;
+  const { id, email, username, gravatar,profile_pic } = request.session.user;
   const io = request.app.get("io");
 
   if (!io) {
@@ -29,6 +29,7 @@ router.post("/:roomId", (request: Request, response: Response) => {
       username,
       email,
       gravatar,
+      profile_pic
     },
     timestamp: new Date(),
   });

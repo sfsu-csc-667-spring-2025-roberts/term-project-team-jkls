@@ -412,3 +412,22 @@ body {
     padding: 10px 8px;
     border-radius: 10px;
 }
+
+/* PROFILE PIC */
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+
+.profile-picture {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}

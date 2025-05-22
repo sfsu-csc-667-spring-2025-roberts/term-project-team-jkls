@@ -5,6 +5,7 @@ export type User = {
   username: string;
   email: string;
   gravatar: string;
+  profile_pic: string;
 };
 
 export type DbGameUser = {
