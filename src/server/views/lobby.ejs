@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lobby</title>
+    <script src="/js/lobby.js" defer></script>
     <%- include("./shared/head") %>
 </head>
 
@@ -28,11 +29,12 @@
                             </select>
                         </div>
                         <button type="submit" id="join-game" class="join-game" disabled>Join Game</button>
-                        <button type="button" id="create-game" class="create-game" disabled>Create Game</button>
+                        <button type="button" id="create-game" class="create-game">Create Game</button>
                     </form>
 
                     <%- include('shared/chat') %>
     </div>
+<%- include('games/create-form') %>
 <%- include('shared/templates') %>
     <script>
         const selectGame = document.getElementById("game");

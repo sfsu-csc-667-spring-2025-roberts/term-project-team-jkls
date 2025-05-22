@@ -398,17 +398,6 @@ eval("\n/**\n * This is the common logic for both the Node.js and web browser\n 
 
 /***/ }),
 
-/***/ "./src/client/js/chat.ts":
-/*!*******************************!*\
-  !*** ./src/client/js/chat.ts ***!
-  \*******************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nconst elements_1 = __importDefault(__webpack_require__(/*! ./elements */ \"./src/client/js/elements.ts\"));\nconst sockets_1 = __webpack_require__(/*! ./sockets */ \"./src/client/js/sockets.ts\");\nconst utils_1 = __webpack_require__(/*! ./utils */ \"./src/client/js/utils/index.ts\");\nsockets_1.socket.on(`chat:message:${(0, utils_1.getGameId)()}`, ({ message, sender, timestamp }) => {\n    var _a;\n    const container = (0, utils_1.cloneTemplate)(\"#chat-message-template\");\n    const img = container.querySelector(\"img\");\n    img.src = `https://gravatar.com/avatar/${sender.gravatar}?d=identicon`;\n    img.alt = `Gravatar for ${sender.email}`;\n    container.querySelector(\"div span:first-of-type\").innerText = message;\n    container.querySelector(\"div span:last-of-type\").innerText = new Date(timestamp).toLocaleTimeString();\n    container.querySelector(\"div p:first-of-type\").innerText = sender.username;\n    elements_1.default.CHAT_MESSAGES.appendChild(container);\n    (_a = elements_1.default.CHAT_MESSAGES) === null || _a === void 0 ? void 0 : _a.scrollTo({\n        top: elements_1.default.CHAT_MESSAGES.scrollHeight,\n        behavior: \"smooth\",\n    });\n});\nelements_1.default.CHAT_FORM.addEventListener(\"submit\", (event) => {\n    event.preventDefault();\n    const message = elements_1.default.CHAT_INPUT.value;\n    if (!message) {\n        return;\n    }\n    elements_1.default.CHAT_INPUT.value = \"\";\n    fetch(`/chat/${(0, utils_1.getGameId)()}`, {\n        method: \"post\",\n        headers: {\n            \"Content-Type\": \"application/json\",\n        },\n        body: JSON.stringify({\n            message,\n        }),\n    }).catch((error) => {\n        console.error(\"Error sending message:\", error);\n    });\n});\n\n\n//# sourceURL=webpack://term-project-jkls/./src/client/js/chat.ts?");
-
-/***/ }),
-
 /***/ "./src/client/js/elements.ts":
 /*!***********************************!*\
   !*** ./src/client/js/elements.ts ***!
@@ -417,6 +406,83 @@ eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {
 
 "use strict";
 eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.CREATE_GAME_CONTAINER = exports.PLAY_AREA = exports.START_GAME_BUTTON = exports.OVERLAY = exports.CHAT_MESSAGES = exports.CHAT_INPUT = exports.CHAT_FORM = void 0;\nexports.CHAT_FORM = \"#chat form\";\nexports.CHAT_INPUT = \"#chat input\";\nexports.CHAT_MESSAGES = \"#chat #messages\";\nexports.OVERLAY = \"#overlay\";\nexports.START_GAME_BUTTON = \"#create-game\";\nexports.PLAY_AREA = \"#play-area\";\nexports.CREATE_GAME_CONTAINER = \"#create-game-container\";\nconst elements = {\n    CHAT_FORM: document.querySelector(exports.CHAT_FORM),\n    CHAT_INPUT: document.querySelector(exports.CHAT_INPUT),\n    CHAT_MESSAGES: document.querySelector(exports.CHAT_MESSAGES),\n    OVERLAY: document.querySelector(exports.OVERLAY),\n    START_GAME_BUTTON: document.querySelector(exports.START_GAME_BUTTON),\n    PLAY_AREA: document.querySelector(exports.PLAY_AREA),\n};\nexports[\"default\"] = elements;\n\n\n//# sourceURL=webpack://term-project-jkls/./src/client/js/elements.ts?");
+
+/***/ }),
+
+/***/ "./src/client/js/game/configure-socket-events.ts":
+/*!*******************************************************!*\
+  !*** ./src/client/js/game/configure-socket-events.ts ***!
+  \*******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.configureSocketEvents = void 0;\nconst elements_1 = __importDefault(__webpack_require__(/*! ../elements */ \"./src/client/js/elements.ts\"));\nconst sockets_1 = __webpack_require__(/*! ../sockets */ \"./src/client/js/sockets.ts\");\nconst utils_1 = __webpack_require__(/*! ../utils */ \"./src/client/js/utils/index.ts\");\nconst create_draw_area_1 = __webpack_require__(/*! ./create-draw-area */ \"./src/client/js/game/create-draw-area.ts\");\nconst create_players_1 = __webpack_require__(/*! ./create-players */ \"./src/client/js/game/create-players.ts\");\nconst MESSAGE_MAP = {\n    [`game:${(0, utils_1.getGameId)()}:updated`]: (gameState) => {\n        var _a, _b;\n        console.log(gameState);\n        (_b = (_a = elements_1.default.OVERLAY) === null || _a === void 0 ? void 0 : _a.parentElement) === null || _b === void 0 ? void 0 : _b.removeChild(elements_1.default.OVERLAY);\n        elements_1.default.PLAY_AREA.replaceChildren((0, create_draw_area_1.createDrawArea)(gameState.buildPiles), (0, create_players_1.currentPlayer)(gameState.currentPlayer), ...Object.values(gameState.players).map((player) => (0, create_players_1.otherPlayer)(player, gameState)));\n    },\n    [`game:${(0, utils_1.getGameId)()}:error`]: ({ error }) => {\n        const errDiv = document.createElement(\"div\");\n        errDiv.classList.add(\"error\", \"message\");\n        errDiv.textContent = error;\n        elements_1.default.CHAT_MESSAGES.appendChild(errDiv);\n    },\n};\nconst configureSocketEvents = () => {\n    Object.entries(MESSAGE_MAP).forEach(([messageName, handler]) => {\n        sockets_1.socket.on(messageName, handler);\n    });\n};\nexports.configureSocketEvents = configureSocketEvents;\n\n\n//# sourceURL=webpack://term-project-jkls/./src/client/js/game/configure-socket-events.ts?");
+
+/***/ }),
+
+/***/ "./src/client/js/game/create-card.ts":
+/*!*******************************************!*\
+  !*** ./src/client/js/game/create-card.ts ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.createCard = void 0;\nconst utils_1 = __webpack_require__(/*! ../utils */ \"./src/client/js/utils/index.ts\");\nconst createSkipboCard = (card) => {\n    const div = (0, utils_1.cloneTemplate)(\"#card-skipbo-template\");\n    div.querySelector(\".card\").dataset.cardId = `${card.id}`;\n    return div;\n};\nconst createNumberCard = (card) => {\n    const div = (0, utils_1.cloneTemplate)(\"#card-number-template\");\n    div.querySelector(\".card\").dataset.cardId = `${card.id}`;\n    div.querySelector(\".card\").dataset.number = `${card.value}`;\n    div.querySelector(\".card-number\").innerText =\n        `${card.value}`;\n    return div;\n};\nconst createBlankCard = () => {\n    const div = (0, utils_1.cloneTemplate)(\"#card-number-template\");\n    div.querySelector(\".card\").classList.add(\"blank\");\n    return div;\n};\nconst createCard = (card) => {\n    if (!card) {\n        return createBlankCard();\n    }\n    else if (card.value == 0) {\n        return createSkipboCard(card);\n    }\n    else {\n        return createNumberCard(card);\n    }\n};\nexports.createCard = createCard;\n\n\n//# sourceURL=webpack://term-project-jkls/./src/client/js/game/create-card.ts?");
+
+/***/ }),
+
+/***/ "./src/client/js/game/create-draw-area.ts":
+/*!************************************************!*\
+  !*** ./src/client/js/game/create-draw-area.ts ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.createDrawArea = void 0;\nconst utils_1 = __webpack_require__(/*! ../utils */ \"./src/client/js/utils/index.ts\");\nconst create_card_1 = __webpack_require__(/*! ./create-card */ \"./src/client/js/game/create-card.ts\");\nconst fetch_wrapper_1 = __webpack_require__(/*! ./fetch-wrapper */ \"./src/client/js/game/fetch-wrapper.ts\");\nconst get_selected_card_id_1 = __webpack_require__(/*! ./get-selected-card-id */ \"./src/client/js/game/get-selected-card-id.ts\");\nconst clickListener = () => {\n    fetch(`/games/${(0, utils_1.getGameId)()}/draw`, { method: \"post\" });\n};\nconst createDrawArea = (buildPiles) => {\n    var _a;\n    const currentDrawPile = document.querySelector(\".center-area .draw-pile\");\n    if (currentDrawPile !== null) {\n        currentDrawPile.removeEventListener(\"click\", clickListener);\n    }\n    const area = (0, utils_1.cloneTemplate)(\"#draw-pile-area-template\");\n    (_a = area\n        .querySelector(\".draw-pile\")) === null || _a === void 0 ? void 0 : _a.addEventListener(\"click\", clickListener);\n    area\n        .querySelectorAll(\".build-pile\")\n        .forEach((pileDiv, index) => {\n        const card = (0, create_card_1.createCard)(buildPiles[index]);\n        card.addEventListener(\"click\", (event) => {\n            const buildPile = event.target.closest(\".build-pile\");\n            const pileId = buildPile\n                ? buildPile.dataset.pileId\n                : undefined;\n            const selectedCardId = (0, get_selected_card_id_1.getSelectedCardId)();\n            if (!pileId || !selectedCardId) {\n                return;\n            }\n            (0, fetch_wrapper_1.post)(`/games/${utils_1.getGameId}/play`, { pileId, selectedCardId });\n        });\n        pileDiv.appendChild(card);\n    });\n    return area;\n};\nexports.createDrawArea = createDrawArea;\n\n\n//# sourceURL=webpack://term-project-jkls/./src/client/js/game/create-draw-area.ts?");
+
+/***/ }),
+
+/***/ "./src/client/js/game/create-players.ts":
+/*!**********************************************!*\
+  !*** ./src/client/js/game/create-players.ts ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.otherPlayer = exports.currentPlayer = void 0;\nconst utils_1 = __webpack_require__(/*! ../utils */ \"./src/client/js/utils/index.ts\");\nconst create_card_1 = __webpack_require__(/*! ./create-card */ \"./src/client/js/game/create-card.ts\");\nconst fetch_wrapper_1 = __webpack_require__(/*! ./fetch-wrapper */ \"./src/client/js/game/fetch-wrapper.ts\");\nconst get_selected_card_id_1 = __webpack_require__(/*! ./get-selected-card-id */ \"./src/client/js/game/get-selected-card-id.ts\");\nconst playerPositions = {};\nconst POSITION_MAPS = [\n    [],\n    [\"bottom\"],\n    [\"bottom\", \"top\"],\n    [\"bottom\", \"left\", \"right\"],\n    [\"bottom\", \"left\", \"top\", \"right\"],\n];\nconst initSeatOrder = (gameState) => {\n    const seatOrder = [\n        ...Object.entries(gameState.players).map(([currentId, { seat }]) => ({\n            playerId: parseInt(currentId),\n            seat,\n        })),\n        {\n            playerId: gameState.currentPlayer.id,\n            seat: gameState.currentPlayer.seat,\n        },\n    ].sort((a, b) => {\n        return a.seat - b.seat;\n    });\n    // Rotate such that current player is front of array;\n    // other players will be positioned around\n    const currentPlayerIndex = seatOrder.findIndex(({ playerId }) => playerId === gameState.currentPlayer.id);\n    const inOrder = seatOrder\n        .slice(currentPlayerIndex)\n        .concat(seatOrder.slice(0, currentPlayerIndex));\n    const map = POSITION_MAPS[1 + Object.keys(gameState.players).length];\n    for (let i = 0; i < map.length; i++) {\n        playerPositions[inOrder[i].playerId] = map[i];\n    }\n};\nconst getPlayerPosition = (playerId, gameState) => {\n    if (Object.keys(playerPositions).length !==\n        Object.keys(gameState.players).length + 1) {\n        initSeatOrder(gameState);\n    }\n    return playerPositions[playerId];\n};\nconst getNewPlayerDiv = (position, handCount, stockCard, stockCount, discardPiles) => {\n    const el = (0, utils_1.cloneTemplate)(\"#player-template\").querySelector(\".player\");\n    el.classList.add(position);\n    el.querySelector(\".hand-count\").innerText = `${handCount}`;\n    const stock = el.querySelector(\".stock-pile\");\n    stock.querySelector(\".count\").innerText = `${stockCount}`;\n    stock.appendChild((0, create_card_1.createCard)(stockCard));\n    const discardDivs = el.querySelectorAll(\".discard-pile\");\n    discardPiles.forEach((pile, index) => {\n        const current = discardDivs[index];\n        if (pile.length === 0) {\n            current.appendChild((0, create_card_1.createCard)());\n        }\n        pile.forEach((card) => {\n            current.appendChild((0, create_card_1.createCard)(card));\n        });\n    });\n    return el;\n};\nconst currentPlayer = ({ hand, stockPileTop, stockPileCount, discardPiles, }) => {\n    var _a;\n    const container = getNewPlayerDiv(\"bottom\", (_a = hand === null || hand === void 0 ? void 0 : hand.length) !== null && _a !== void 0 ? _a : 0, stockPileTop, stockPileCount, discardPiles);\n    const handArea = container.querySelector(\".hand\");\n    const handElements = hand === null || hand === void 0 ? void 0 : hand.map((card) => {\n        return (0, create_card_1.createCard)(card);\n    });\n    if (handElements && handArea) {\n        handArea.append(...handElements);\n    }\n    handArea === null || handArea === void 0 ? void 0 : handArea.addEventListener(\"click\", (event) => {\n        if (event.target == null || !(event.target instanceof HTMLElement)) {\n            return;\n        }\n        const target = event.target.closest(\"[data-card-id]\");\n        if (target) {\n            handArea\n                .querySelectorAll(\".card\")\n                .forEach((el) => el.classList.remove(\"selected\"));\n            target.classList.add(\"selected\");\n        }\n    });\n    const discardArea = container.querySelector(\".discard-area\");\n    if (discardArea) {\n        discardArea.addEventListener(\"click\", (event) => {\n            if (event.target == null || !(event.target instanceof HTMLElement)) {\n                return;\n            }\n            const target = event.target.closest(\".discard-pile\");\n            const selectedCardId = (0, get_selected_card_id_1.getSelectedCardId)();\n            const pileId = target === null || target === void 0 ? void 0 : target.dataset.discardPile;\n            if (pileId && selectedCardId) {\n                (0, fetch_wrapper_1.post)(`/games/${(0, utils_1.getGameId)()}/discard`, {\n                    pileId: parseInt(pileId),\n                    selectedCardId: parseInt(selectedCardId),\n                });\n            }\n        });\n    }\n    return container;\n};\nexports.currentPlayer = currentPlayer;\nconst otherPlayer = ({ id, handCount, stockPileTop, stockPileCount, discardPiles, }, gameState) => {\n    return getNewPlayerDiv(getPlayerPosition(id, gameState), handCount, stockPileTop, stockPileCount, discardPiles);\n};\nexports.otherPlayer = otherPlayer;\n\n\n//# sourceURL=webpack://term-project-jkls/./src/client/js/game/create-players.ts?");
+
+/***/ }),
+
+/***/ "./src/client/js/game/fetch-wrapper.ts":
+/*!*********************************************!*\
+  !*** ./src/client/js/game/fetch-wrapper.ts ***!
+  \*********************************************/
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\n    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.post = void 0;\nconst post = (endpoint, data) => __awaiter(void 0, void 0, void 0, function* () {\n    yield fetch(endpoint, {\n        method: \"post\",\n        headers: { \"Content-Type\": \"application/json\" },\n        body: JSON.stringify(data),\n    });\n});\nexports.post = post;\n\n\n//# sourceURL=webpack://term-project-jkls/./src/client/js/game/fetch-wrapper.ts?");
+
+/***/ }),
+
+/***/ "./src/client/js/game/get-selected-card-id.ts":
+/*!****************************************************!*\
+  !*** ./src/client/js/game/get-selected-card-id.ts ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.getSelectedCardId = void 0;\nconst getSelectedCardId = () => {\n    const selectedCards = document.querySelectorAll(\".card.selected\");\n    if (selectedCards.length === 1) {\n        const selectedCardId = selectedCards[0].dataset.cardId;\n        return selectedCardId;\n    }\n};\nexports.getSelectedCardId = getSelectedCardId;\n\n\n//# sourceURL=webpack://term-project-jkls/./src/client/js/game/get-selected-card-id.ts?");
+
+/***/ }),
+
+/***/ "./src/client/js/games.ts":
+/*!********************************!*\
+  !*** ./src/client/js/games.ts ***!
+  \********************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nvar _a;\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nconst elements_1 = __importDefault(__webpack_require__(/*! ./elements */ \"./src/client/js/elements.ts\"));\nconst configure_socket_events_1 = __webpack_require__(/*! ./game/configure-socket-events */ \"./src/client/js/game/configure-socket-events.ts\");\nconst utils_1 = __webpack_require__(/*! ./utils */ \"./src/client/js/utils/index.ts\");\n(0, configure_socket_events_1.configureSocketEvents)();\n(_a = elements_1.default.START_GAME_BUTTON) === null || _a === void 0 ? void 0 : _a.addEventListener(\"click\", (event) => {\n    event.preventDefault();\n    fetch(`/games/${(0, utils_1.getGameId)()}/start`, {\n        method: \"post\",\n    });\n});\nif (elements_1.default.PLAY_AREA.classList.contains(\"started\")) {\n    fetch(`/games/${(0, utils_1.getGameId)()}/ping`, { method: \"post\" });\n}\n\n\n//# sourceURL=webpack://term-project-jkls/./src/client/js/games.ts?");
 
 /***/ }),
 
@@ -524,7 +590,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexpo
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__("./src/client/js/chat.ts");
+/******/ 	var __webpack_exports__ = __webpack_require__("./src/client/js/games.ts");
 /******/ 	
 /******/ })()
 ;
