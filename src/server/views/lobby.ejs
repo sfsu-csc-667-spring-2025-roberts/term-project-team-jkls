@@ -25,7 +25,15 @@
                             <label for="game" class="option-text">Join a Lobby:</label>
                             <select id="game" name="game" required>
                                 <option value="" disabled selected>Select a game</option>
-                                <!-- Add game options here -->
+                                <% if (locals.availableGames && availableGames.length> 0) { %>
+                                    <% availableGames.forEach((game)=> { %>
+                                        <option value="<%= game.id %>">
+                                            <%= game.description ? game.description : `Room-${game.id}` %>
+                                        </option>
+                                        <% }) %>
+                                            <% } else { %>
+                                                <option value="" disabled>No available games</option>
+                                                <% } %>
                             </select>
                         </div>
                         <button type="submit" id="join-game" class="join-game" disabled>Join Game</button>
@@ -34,15 +42,15 @@
 
                     <%- include('shared/chat') %>
     </div>
-<%- include('games/create-form') %>
-<%- include('shared/templates') %>
-    <script>
-        const selectGame = document.getElementById("game");
-        const joinButton = document.getElementById("join-game");
+    <%- include('games/create-form') %>
+        <%- include('shared/templates') %>
+            <script>
+                const selectGame = document.getElementById("game");
+                const joinButton = document.getElementById("join-game");
 
-        selectGame.addEventListener("change", () => {
-            joinButton.disabled = !selectGame.value;
-        });
+                selectGame.addEventListener("change", () => {
+                    joinButton.disabled = !selectGame.value;
+                });
 
-    </script>
+            </script>
 </body>

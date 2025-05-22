@@ -316,6 +316,43 @@ body {
 
 #game-container {
     width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#game-area-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+#game-table {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 50px;
+}
+
+.game-table-waiting-overlay {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.waiting-for-host {
+     font-size: 2em;
+    font-weight: 300;
+    text-align: center;
+    font-family: "Russo One", sans-serif;
+    color: #fff;
 }
 
 

@@ -12,7 +12,7 @@ AND $1 NOT IN (
   WHERE games.id=game_users.game_id
 )`;
 
-export const getAvailablGames = async (userId: number) => {
+export const getAvailableGames = async (userId: number) => {
   // any game that has less than max players that userId isnt in
   return db.any(SQL, [userId]);
 };
