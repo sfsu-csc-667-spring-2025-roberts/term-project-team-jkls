@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import { OtherPlayerInfo, PlayerGameState } from "global";
+import { OtherPlayerInfo, PlayerGameState, PlayerInfo } from "global";
 import { getState } from "./get-state";
 
 export const broadcastGameState = async (
@@ -13,6 +13,14 @@ export const broadcastGameState = async (
   const currentPlayer = gameState.players[userIdStr];
 
   if (currentPlayer === undefined) {
+    console.log(`❌ [BROADCAST] Player ${userId} not found in game state`);
+    return;
+  }
+
+  // Find who has the current turn - handle undefined case
+  const currentTurnPlayer = Object.values(gameState.players).find(p => p.isCurrent);
+  
+  if (!currentTurnPlayer) {
     return;
   }
 
@@ -29,12 +37,14 @@ export const broadcastGameState = async (
 
   const playerGameState: PlayerGameState = {
     currentPlayer,
+    currentTurnPlayer,
     players,
     buildPiles: gameState.buildPiles,
     currentBet: gameState.currentBet,
     currentRound: gameState.currentRound,
     turnInfo: gameState.turnInfo
   };
+
 
   io.to(userIdStr).emit(`game:${gameId}:updated`, playerGameState);
 };

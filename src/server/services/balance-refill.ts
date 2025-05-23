@@ -1,23 +1,75 @@
 import db from "../db/connection";
 
-export const checkAndRefillBalances = async () => {
-  const oneDay = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+const REFILL_AMOUNT = 10000;
+const REFILL_INTERVAL_HOURS = 24;
+
+export const checkAndRefillBalance = async (userId: number): Promise<{ 
+  balance: number; 
+  wasRefilled: boolean; 
+  nextRefillTime?: Date;
+}> => {  
+  const user = await db.one(
+    `SELECT balance, last_refill FROM users WHERE id = $1`,
+    [userId]
+  );
   
-  const usersToRefill = await db.manyOrNone(`
-    SELECT game_id, user_id, balance, last_refill 
-    FROM game_users
-    WHERE balance < 10000 AND 
-          NOW() - last_refill > interval '24 hours'
-  `);
-  
-  for (const user of usersToRefill) {
-    await db.none(`
-      UPDATE game_users 
-      SET balance = 10000,
-          last_refill = NOW()
-      WHERE game_id = $1 AND user_id = $2
-    `, [user.game_id, user.user_id]);
+  const currentBalance = parseInt(user.balance);
+  const lastRefill = new Date(user.last_refill);
+  const now = new Date();
+  const hoursSinceRefill = (now.getTime() - lastRefill.getTime()) / (1000 * 60 * 60);
     
-    console.log(`Refilled balance for user ${user.user_id} in game ${user.game_id}`);
+  // If balance is >= 10,000, no refill needed
+  if (currentBalance >= REFILL_AMOUNT) {
+    return { 
+      balance: currentBalance, 
+      wasRefilled: false,
+      nextRefillTime: new Date(lastRefill.getTime() + (REFILL_INTERVAL_HOURS * 60 * 60 * 1000))
+    };
   }
+  
+  // If balance is < 10,000 but hasn't been 24 hours yet
+  if (hoursSinceRefill < REFILL_INTERVAL_HOURS) {
+    const nextRefillTime = new Date(lastRefill.getTime() + (REFILL_INTERVAL_HOURS * 60 * 60 * 1000));
+    return { 
+      balance: currentBalance, 
+      wasRefilled: false,
+      nextRefillTime
+    };
+  }
+    
+  await db.none(
+    `UPDATE users 
+     SET balance = $2, last_refill = NOW() 
+     WHERE id = $1`,
+    [userId, REFILL_AMOUNT]
+  );
+    
+  return { 
+    balance: REFILL_AMOUNT, 
+    wasRefilled: true 
+  };
+};
+
+export const getUserBalance = async (userId: number): Promise<number> => {
+  const { balance } = await db.one(
+    `SELECT balance FROM users WHERE id = $1`,
+    [userId]
+  );
+  return parseInt(balance);
+};
+
+export const updateUserBalance = async (userId: number, amount: number): Promise<number> => {
+  const { balance } = await db.one(
+    `UPDATE users 
+     SET balance = balance + $2 
+     WHERE id = $1 
+     RETURNING balance`,
+    [userId, amount]
+  );
+  return parseInt(balance);
+};
+
+export const canAffordBet = async (userId: number, betAmount: number): Promise<boolean> => {
+  const balance = await getUserBalance(userId);
+  return balance >= betAmount;
 };

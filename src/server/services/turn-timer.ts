@@ -10,9 +10,7 @@ export const startTurnTimer = async (gameId: number, io: Server): Promise<void> 
   
   const TURN_DURATION = 45;
   let secondsLeft = TURN_DURATION;
-  
-  console.log(`🎯 Starting timer for game ${gameId}`);
-  
+    
   // Update database with timer info
   await db.none(`
     UPDATE games 
@@ -35,21 +33,17 @@ export const startTurnTimer = async (gameId: number, io: Server): Promise<void> 
     if (secondsLeft <= 0) {
       clearInterval(timerInterval);
       activeTimers.delete(gameId);
-      console.log(`⏰ Timer expired for game ${gameId}, ending turn...`);
       
       await endTurn(gameId, io);
     }
   }, 1000);
   
   activeTimers.set(gameId, timerInterval);
-  console.log(`✅ Timer started for game ${gameId}`);
 };
 
 export const endTurn = async (gameId: number, io: Server): Promise<void> => {
   clearTurnTimer(gameId);
-  
-  console.log(`🔄 [END TURN] Ending turn for game ${gameId}`);
-  
+    
   const players = await Game.getPlayers(gameId);
   
   const currentPlayerIndex = players.findIndex(p => p.is_current);

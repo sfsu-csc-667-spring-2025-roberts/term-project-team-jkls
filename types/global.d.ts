@@ -65,6 +65,7 @@ export type OtherPlayerInfo = Player & {
 export type TurnTimerInfo = {
   secondsLeft: number;
   totalSeconds: number;
+  hasExpired?: boolean;
 };
 
 export type GameState = {
@@ -78,6 +79,7 @@ export type GameState = {
 
 export type PlayerGameState = {
   currentPlayer: PlayerInfo;
+  currentTurnPlayer: PlayerInfo;
   players: Record<string, OtherPlayerInfo>;
   buildPiles: Card[];
   currentBet: number;

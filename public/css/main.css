@@ -959,17 +959,56 @@ body {
 .navbar-right {
     display: flex;
     align-items: center;
-    gap: 10px;
-    position: absolute;
-    right: 15px;
+    gap: 20px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-balance {
+    background-color: #2c5530;
+    color: #90EE90;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 16px;
+    border: 2px solid #4a7c59;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    min-width: 80px;
+    text-align: center;
+}
+
+.user-balance.low-balance {
+    background-color: #5a2c2c;
+    color: #ff6b6b;
+    border-color: #7a4a4a;
+}
+
+.username {
+    color: white;
+    font-weight: bold;
 }
 
 .profile-picture {
-    width: 70px;
-    height: 70px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid white;
+    border: 2px solid #fff;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.navbar a:hover {
+    background-color: rgba(255,255,255,0.1);
 }
 
 .error-message {
@@ -1020,4 +1059,46 @@ body {
 #end-turn-button:disabled {
   background-color: #666;
   cursor: not-allowed;
+}
+
+/* Add this to your existing CSS */
+
+.balance-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  z-index: 10000;
+  animation: slideIn 0.3s ease-out;
+}
+
+.balance-notification.success {
+  background-color: #4CAF50;
+  color: white;
+  border: 2px solid #45a049;
+}
+
+.balance-notification.info {
+  background-color: #2196F3;
+  color: white;
+  border: 2px solid #1976D2;
+}
+
+.balance-notification.warning {
+  background-color: #ff9800;
+  color: white;
+  border: 2px solid #f57c00;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }

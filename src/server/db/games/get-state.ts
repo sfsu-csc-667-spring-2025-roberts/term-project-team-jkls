@@ -62,17 +62,15 @@ export const getState = async (gameId: number): Promise<GameState> => {
 
   const betInfo = await getBetInfo(gameId);
 
-
   const playerInfo: Record<string, PlayerInfo> = {};
 
   for (let playerIndex = 0; playerIndex < players.length; playerIndex++) {
     const player = players[playerIndex];
-
     const { id: userId } = players[playerIndex];
 
     const { balance } = await db.one(
-      `SELECT balance FROM game_users WHERE game_id = $1 AND user_id = $2`,
-      [gameId, userId]
+      `SELECT balance FROM users WHERE id = $1`,
+      [userId]
     );
 
     const hand = await db.manyOrNone(GET_CARD_SQL, {
@@ -142,7 +140,8 @@ export const getState = async (gameId: number): Promise<GameState> => {
       
       return {
         secondsLeft,
-        totalSeconds: data.turn_duration
+        totalSeconds: data.turn_duration,
+        hasExpired: secondsLeft <= 0
       };
     })
   };
