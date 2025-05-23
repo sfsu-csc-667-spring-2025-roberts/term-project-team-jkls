@@ -49,8 +49,8 @@ body {
     margin-top: -100px;
     text-align: center;
     font-family: "Coral Pixels", serif;
-  font-weight: 100;
-  font-style: normal;
+    font-weight: 100;
+    font-style: normal;
     color: #fff;
 }
 
@@ -264,18 +264,18 @@ body {
     position: absolute;
     top: 25%;
     left: 25%;
-  width: 50%;
-  display: none;
-  flex-direction: column;
-  align-items: center;
+    width: 50%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
-  background-color: #252525be;
-  z-index: 500;
-  border-radius: 25px;
+    background-color: #252525be;
+    z-index: 500;
+    border-radius: 25px;
 }
 
 #create-game-container.visible {
-  display: flex;
+    display: flex;
 }
 
 #my-games {
@@ -341,18 +341,16 @@ body {
     gap: 20px;
 }
 
-/* ──────────────────────────────────────────────────────────
-   TABLE GRID (overrides older flex rule)                   */
 #game-area-content {
     width: 100%;
     height: 100%;
 }
 
 #game-table {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
     align-items: center;
 }
 
@@ -361,9 +359,6 @@ body {
     height: 100%;
 }
 
-.build-piles {
-    display: flex;
-}
 
 .hand {
     display: flex;
@@ -371,72 +366,149 @@ body {
 }
 
 .player {
-  display: flex;
-  gap: 6px;
+    display: flex;
+    gap: 6px;
 }
 
-/* current player (faces) */
 .player.bottom {
+    z-index: 10;
     position: absolute;
     bottom: 0;
-    left: 5vw;
-  grid-row: 3 / 4;
-  grid-column: 2 / 3;
-  place-self: center;
-  flex-direction: row;
-  margin-bottom: 40px;
+    left: 0;
+    flex-direction: row;
+    width: 65%;
+    padding-left: 5%;
+    grid-row: auto;
+    grid-column: auto;
+    place-self: auto;
+    margin-bottom: 20px;
 }
 
-/* top opponent */
+.player.bottom .card {
+    transform: none;
+}
+
+
+.player.bottom .hand {
+    margin-left: 5%;
+    max-width: 70%;
+}
+
 .player.top {
     margin-top: 30px;
-  grid-row: 1 / 2;
-  grid-column: 2 / 3;
-  place-self: center;
-  flex-direction: row;
+    grid-row: 1 / 2;
+    grid-column: 2 / 3;
+    place-self: center;
+    flex-direction: row;
 }
 
-/* left opponent */
 .player.left {
-  grid-row: 2 / 3;
-  grid-column: 1 / 2;
-  place-self: center;
-  flex-direction: column;
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
-/* right opponent */
 .player.right {
-  grid-row: 2 / 3;
-  grid-column: 3 / 4;
-  place-self: center;
-  flex-direction: column;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
-/* ──────────────────────────────────────────────────────────
-   CARD LOOK & FEEL                                          */
+.player.left .hand,
+.player.right .hand {
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+}
+
+.player.left .card,
+.player.right .card {
+    width: 100px;
+    height: 60px;
+}
+
+.player.left .card img,
+.player.right .card img {
+    transform: rotate(90deg);
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+
+
 .card {
-  width: 80px;   /* tweak size to taste */
-  height: 115px;
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0,0,0,.25);
+    width: 80px;
+    height: 115px;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
 }
 
 .card img {
-  width: 100%;
-  height: 100%;
-  display: block;
+    width: 100%;
+    height: 100%;
+    display: block;
 }
 
-/* lift current player’s hand slightly */
-.player.bottom .card { transform: translateY(-10px); }
 
-/* rotate side stacks (optional) */
-.player.left  .card { transform: rotate(-90deg); }
-.player.right .card { transform: rotate( 90deg); }
 
-/* selected-card outline */
-.card.selected { outline: 3px solid #ffd200; }
+
+.card.selected {
+    outline: 3px solid #ffd200;
+}
+
+.player:not(.bottom) .game-action-container {
+  display: none !important;
+}
+
+.player.bottom .game-action-container {
+  display: flex;
+  gap: 10px;
+}
+
+.game-action {
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.call-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.discard-button {
+  background-color: #2196F3;
+  color: white;
+}
+
+.fold-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.game-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.player-area {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.game-action-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%;
+    gap: 3px;
+}
 
 
 
@@ -507,7 +579,7 @@ body {
 }
 
 .waiting-for-host {
-     font-size: 2em;
+    font-size: 2em;
     font-weight: 300;
     text-align: center;
     font-family: "Russo One", sans-serif;
@@ -529,7 +601,7 @@ body {
 #messages {
     height: 85%;
     overflow-y: scroll;
-    
+
 }
 
 #message-input {
@@ -545,7 +617,7 @@ body {
 #chat-form {
     width: 100%;
     display: flex;
-    height:auto;
+    height: auto;
 }
 
 
@@ -575,40 +647,39 @@ body {
 /* PROFILE PIC */
 
 .navbar-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: absolute;
-  top: 15px;
-  right: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: absolute;
+    top: 15px;
+    right: 15px;
 }
 
 .profile-picture {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid white;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
 }
 
 .error-message {
-  color: #b20000;
-  background-color: #ffe6e6;
-  padding: 10px;
-  border: 1px solid #ffcccc;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-  font-weight: bold;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    color: #b20000;
+    background-color: #ffe6e6;
+    padding: 10px;
+    border: 1px solid #ffcccc;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .form-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
 }
-
