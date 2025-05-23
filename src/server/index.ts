@@ -30,7 +30,10 @@ app.use(middleware.currentUser);
 app.use(middleware.room);
 config.liveReload(app);
 
-
+app.use(
+  "/assets",
+  express.static(path.join(__dirname, "..", "public", "assets"))
+);
 app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(express.json());

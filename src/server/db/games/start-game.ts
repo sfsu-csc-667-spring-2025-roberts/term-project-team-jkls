@@ -1,6 +1,6 @@
 import db from "../connection";
-import { PLAYER_HAND, STOCK_PILE } from "./constants";
-// import { dealCards } from "./deal-cards";
+import { PLAYER_HAND } from "./constants";
+import { dealCards } from "./deal-cards";
 import { getPlayers } from "./get-players";
 import { setCurrentPlayer } from "./set-current-player";
 
@@ -15,10 +15,9 @@ export const start = async (gameId: number) => {
 
   const players = await getPlayers(gameId);
 
-//   for (let i = 0; i < players.length; i++) {
-//     await dealCards(players[i].id, gameId, 20, STOCK_PILE);
-//     await dealCards(players[i].id, gameId, 5, PLAYER_HAND);
-//   }
+  for (let i = 0; i < players.length; i++) {
+    await dealCards(players[i].id, gameId, 5, PLAYER_HAND);
+  }
 
   await setCurrentPlayer(gameId, players[0].id);
 };

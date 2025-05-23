@@ -2,7 +2,6 @@ import { PlayerGameState } from "global";
 import UI from "../elements";
 import { socket } from "../sockets";
 import { getGameId } from "../utils";
-import { createDrawArea } from "./create-draw-area";
 import { currentPlayer, otherPlayer } from "./create-players";
 
 const MESSAGE_MAP: Record<string, Function> = {
@@ -12,7 +11,6 @@ const MESSAGE_MAP: Record<string, Function> = {
     UI.OVERLAY?.parentElement?.removeChild(UI.OVERLAY);
 
     UI.PLAY_AREA.replaceChildren(
-      createDrawArea(gameState.buildPiles),
       currentPlayer(gameState.currentPlayer),
       ...Object.values(gameState.players).map((player) =>
         otherPlayer(player, gameState),

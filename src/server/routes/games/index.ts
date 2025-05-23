@@ -6,7 +6,7 @@ import { join } from "./join";
 // import { draw } from "./draw";
 import { get } from "./get";
 
-// import { ping } from "./ping";
+import { ping } from "./ping";
 // import { play } from "./play";
 import { start } from "./start";
 import { validatePassword } from "./validate-password";
@@ -20,7 +20,7 @@ router.post("/:gameId/start", start);
 router.post("/:gameId/validate-password", (req, res, next) => {
   validatePassword(req, res).catch(next);
 });
-// router.post("/:gameId/ping", ping);
+router.post("/:gameId/ping", ping);
 // router.post("/:gameId/draw", draw);
 // router.post("/:gameId/discard", discard);
 // router.post("/:gameId/play", play);

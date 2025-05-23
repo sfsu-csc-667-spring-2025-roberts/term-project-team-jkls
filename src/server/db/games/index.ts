@@ -1,6 +1,6 @@
 // import { cleanUpBuildPile } from "./clean-up-build-pile";
 import { create } from "./create";
-// import { dealCards } from "./deal-cards";
+import { dealCards } from "./deal-cards";
 // import { discardCard } from "./discard-card";
 // import { doesPlayerHaveCard } from "./does-player-have-card";
 // import { drawCard } from "./draw-card";
@@ -28,7 +28,7 @@ export default {
 getState,
   getHost,
   getInfo,
-
+  dealCards,
   getAvailableGames,
 
   getCurrentGames,

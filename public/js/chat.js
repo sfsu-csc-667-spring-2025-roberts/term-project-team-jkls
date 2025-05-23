@@ -427,7 +427,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexpo
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.socket = void 0;\nconst socket_io_client_1 = __importDefault(__webpack_require__(/*! socket.io-client */ \"./node_modules/socket.io-client/build/cjs/index.js\"));\nconst socket = (0, socket_io_client_1.default)();\nexports.socket = socket;\n\n\n//# sourceURL=webpack://term-project-jkls/./src/client/js/sockets.ts?");
+eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.waitForSocket = exports.socket = void 0;\nconst socket_io_client_1 = __importDefault(__webpack_require__(/*! socket.io-client */ \"./node_modules/socket.io-client/build/cjs/index.js\"));\nexports.socket = (0, socket_io_client_1.default)();\nexports.waitForSocket = new Promise((resolve) => {\n    if (exports.socket.connected)\n        resolve();\n    else\n        exports.socket.on(\"connect\", () => resolve());\n});\n\n\n//# sourceURL=webpack://term-project-jkls/./src/client/js/sockets.ts?");
 
 /***/ }),
 

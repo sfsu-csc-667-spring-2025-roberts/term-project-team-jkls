@@ -27,7 +27,7 @@ router.post("/register", upload.single("profilePic"), async (request: Request, r
     const { email, password, username } = request.body;
      const profilePic = request.file?.filename || "default.png";
     try {
-        const user = await User.register(email, password, username,profilePic);
+        const user = await User.register(email, password, username, profilePic);
 
         // @ts-ignore
         request.session.user = user; // Store user in session
