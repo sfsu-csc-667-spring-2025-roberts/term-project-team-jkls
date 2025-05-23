@@ -9,7 +9,6 @@ console.log('🚀 Games.ts loading...');
 
 waitForSocket.then(() => {
   const gameId = getGameId();
-  console.log("✅ Socket connected, configuring events for game:", gameId);
   
   // Configure socket events first
   configureSocketEvents();
@@ -19,12 +18,8 @@ waitForSocket.then(() => {
   socket.emit("join:game", gameId);
   
   // Listen for join confirmation
-  socket.once("joined:game", (data) => {
-    console.log("🎯 Confirmed joined game room:", data);
-    
-    // If game has already started, ping to get current state
+  socket.once("joined:game", (data: any) => {    
     if (UI.PLAY_AREA?.classList.contains("started")) {
-      console.log("🏓 Game already started, pinging for current state...");
       setTimeout(() => {
         fetch(`/games/${gameId}/ping`, { method: "post" });
       }, 500);
@@ -32,7 +27,7 @@ waitForSocket.then(() => {
   });
   
 }).catch(error => {
-  console.error('❌ Error in waitForSocket:', error);
+  console.error('Error in waitForSocket:', error);
 });
 
 UI.START_GAME_BUTTON?.addEventListener("click", (e) => {
@@ -49,24 +44,17 @@ UI.START_GAME_BUTTON?.addEventListener("click", (e) => {
 document.addEventListener('DOMContentLoaded', () => {
   console.log('📄 DOM Content Loaded');
   
+  // Check balance and potentially refill
+  checkAndUpdateBalance();
+  
   const endTurnButton = document.getElementById('end-turn-button') as HTMLButtonElement;
   const placeBetButton = document.getElementById('place-bet-button') as HTMLButtonElement;
   const betAmountInput = document.getElementById('bet-amount') as HTMLInputElement;
   
-  console.log('🔍 DOM loaded - checking buttons:', {
-    endTurnButton: !!endTurnButton,
-    placeBetButton: !!placeBetButton,
-    betAmountInput: !!betAmountInput
-  });
-  
   if (endTurnButton) {
-    console.log('🔘 End turn button found, adding event listener');
     endTurnButton.addEventListener('click', () => {
-      console.log('🔄 End turn button clicked');
       endTurn();
     });
-  } else {
-    console.error('❌ End turn button not found!');
   }
   
   if (placeBetButton && betAmountInput) {
@@ -79,21 +67,59 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+async function checkAndUpdateBalance() {
+  try {
+    const response = await fetch('/balance');
+    const data = await response.json();
+    
+    const userBalanceEl = document.getElementById('user-balance');
+    if (userBalanceEl) {
+      userBalanceEl.textContent = `$${data.balance.toLocaleString()}`;
+      
+      if (data.balance < 1000) {
+        userBalanceEl.classList.add('low-balance');
+      } else {
+        userBalanceEl.classList.remove('low-balance');
+      }
+    }
+    
+    // Show refill notification if balance was refilled
+    if (data.wasRefilled) {
+      showBalanceNotification("💰 Your balance has been refilled to $10,000!", "success");
+    } else if (data.balance < 10000 && data.nextRefillTime) {
+      const nextRefill = new Date(data.nextRefillTime);
+      const now = new Date();
+      const hoursUntilRefill = Math.ceil((nextRefill.getTime() - now.getTime()) / (1000 * 60 * 60));
+      
+      if (hoursUntilRefill <= 2) {
+        showBalanceNotification(`💰 Balance refill available in ${hoursUntilRefill} hour(s)`, "info");
+      }
+    }
+    
+    console.log('💰 Balance check completed:', data);
+  } catch (error) {
+    console.error('❌ Error checking balance:', error);
+  }
+}
+
+function showBalanceNotification(message: string, type: "success" | "info" | "warning") {
+  const notification = document.createElement('div');
+  notification.className = `balance-notification ${type}`;
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.remove();
+  }, 5000);
+}
+
 function endTurn() {
   const gameId = getGameId();
-  
-  console.log('🔄 Attempting to end turn for game:', gameId);
   
   fetch(`/games/${gameId}/end-turn`, {
     method: 'POST'
   })
-  .then(response => {
-    console.log('📤 End turn response status:', response.status);
-    if (!response.ok) {
-      throw new Error('Failed to end turn');
-    }
-    return response.json();
-  })
+  .then(response => response.json())
   .then(data => {
     console.log('✅ End turn successful:', data);
   })
@@ -112,11 +138,19 @@ function placeBet(amount: number) {
     },
     body: JSON.stringify({ amount })
   })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Failed to place bet');
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      console.log('💰 Bet placed successfully:', data);
+      
+      // Update balance display
+      const userBalanceEl = document.getElementById('user-balance');
+      if (userBalanceEl && data.newBalance !== undefined) {
+        userBalanceEl.textContent = `$${data.newBalance.toLocaleString()}`;
+      }
+    } else {
+      alert(data.error || 'Failed to place bet');
     }
-    return response.json();
   })
   .catch(error => {
     console.error('Error placing bet:', error);
@@ -124,11 +158,9 @@ function placeBet(amount: number) {
 }
 
 socket.on(`game:${getGameId()}:player-joined`, (data: any) => {
-  console.log('👥 Player joined, reloading...', data);
   window.location.reload();
 });
 
 socket.on(`game:${getGameId()}:player-left`, (data: any) => {
-  console.log('👤 Player left, reloading...', data);
   window.location.reload();
 });

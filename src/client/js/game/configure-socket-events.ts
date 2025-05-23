@@ -66,10 +66,13 @@ export const configureSocketEvents = () => {
     updateTurnTimer(timerData.secondsLeft, timerData.totalSeconds);
   });
 
-  // Add handler for timer sync when returning to game
   socket.on(`game:${gameId}:timer-sync`, (data: { userId: number, secondsLeft: number, totalSeconds: number }) => {
     console.log('🔄 Timer sync received:', data);
     updateTurnTimer(data.secondsLeft, data.totalSeconds);
+  });
+
+  socket.on(`game:${gameId}:bet`, (data: { userId: number, amount: number }) => {
+    console.log('💰 Bet event received:', data);
   });
 
   console.log('🔧 Socket events configured for game:', gameId);

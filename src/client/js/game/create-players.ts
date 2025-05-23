@@ -10,6 +10,13 @@ export const currentPlayer = (player: PlayerInfo) => {
   div.classList.add("bottom");
 
   div.dataset.userId = player.id.toString();
+  
+  // Add current turn indicator
+  if (player.isCurrent) {
+    div.classList.add("current");
+  } else {
+    div.classList.remove("current");
+  }
 
   if (player.hand) {
     const handDiv = div.querySelector<HTMLDivElement>(".hand")!;
@@ -31,6 +38,13 @@ export const otherPlayer = (player: OtherPlayerInfo, gameState: PlayerGameState)
   const div = template.querySelector<HTMLDivElement>(".player")!;
 
   div.dataset.userId = player.id.toString();
+
+  // Add current turn indicator
+  if (player.isCurrent) {
+    div.classList.add("current");
+  } else {
+    div.classList.remove("current");
+  }
 
   switch (player.seat) {
     case 1:

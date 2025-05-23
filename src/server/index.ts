@@ -13,6 +13,7 @@ dotenv.config();
 import * as config from "./config";
 import * as routes from "./routes";
 import * as middleware from "./middeware";
+import balanceRoutes from "./routes/balance";
 
 const app = express();
 const server = http.createServer(app);
@@ -23,8 +24,6 @@ app.use(sessionMw)
 config.socket(io, app, sessionMw);
 
 const PORT = process.env.PORT || 3000;
-
-
 
 app.use(middleware.currentUser);
 app.use(middleware.room);
@@ -54,6 +53,7 @@ app.use("/auth", routes.auth);
 app.use("/chat", middleware.auth, routes.chat);
 app.use("/lobby", middleware.auth, routes.lobby);
 app.use("/games", middleware.auth, routes.games);
+app.use("/balance", middleware.auth, balanceRoutes); // Add this line
 
 app.use((_request, _response, next) => {
   next(httpErrors(404));

@@ -48,12 +48,23 @@ export const get = async (request: Request, response: Response) => {
         
         console.log(`⏰ [GET] Sending timer data to user ${userId}:`, timerData);
         
-        // Send timer update to both user's personal room AND game room
-        io.to(userId.toString()).emit(`game:${gameId}:timer-update`, timerData);
-        io.to(`game:${gameId}`).emit(`game:${gameId}:timer-sync`, {
-          userId,
-          ...timerData
-        });
+        // Check if timer expired and handle it
+        if (timerData.secondsLeft <= 0) {
+          console.log(`🔄 [GET] Timer expired, auto-ending turn for game ${gameId}`);
+          const { endTurn } = await import("../../services/turn-timer");
+          await endTurn(parseInt(gameId), io);
+          
+          // Broadcast updated state
+          const { broadcastGameStateToAll } = await import("./broadcast-game-state");
+          await broadcastGameStateToAll(parseInt(gameId), io);
+        } else {
+          // Send timer update to both user's personal room AND game room
+          io.to(userId.toString()).emit(`game:${gameId}:timer-update`, timerData);
+          io.to(`game:${gameId}`).emit(`game:${gameId}:timer-sync`, {
+            userId,
+            ...timerData
+          });
+        }
         
       }, 2000); // Increased delay to ensure client is ready
     }

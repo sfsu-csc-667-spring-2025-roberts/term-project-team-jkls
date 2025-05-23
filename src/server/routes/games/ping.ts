@@ -6,31 +6,45 @@ export const ping = async (request: Request, response: Response) => {
   const { gameId } = request.params;
   // @ts-ignore
   const { id: userId } = request.session.user!;
-
-    console.log(`🏓 [PING] User ${userId} pinging game ${gameId}`);
+  
+  const hasStarted = await Game.hasStarted(parseInt(gameId));
+  
+  if (hasStarted) {
+    const io = request.app.get("io");
+    await broadcastGameStateToPlayer(parseInt(gameId), userId.toString(), io);
     
-    const hasStarted = await Game.hasStarted(parseInt(gameId));
-    
-    if (hasStarted) {
-      const io = request.app.get("io");
+    // Get current timer state
+    const gameState = await Game.getState(parseInt(gameId));
+    const timerData = {
+      secondsLeft: gameState.turnInfo.secondsLeft,
+      totalSeconds: gameState.turnInfo.totalSeconds
+    };
+        
+    // If timer has expired, auto-end the turn
+    if (timerData.secondsLeft <= 0) {
+      const { endTurn } = await import("../../services/turn-timer");
+      await endTurn(parseInt(gameId), io);
       
-      console.log(`📡 [PING] Broadcasting game state to user ${userId}`);
-      await broadcastGameStateToPlayer(parseInt(gameId), userId.toString(), io);
-      
-      // Send current timer state
-      const gameState = await Game.getState(parseInt(gameId));
-      const timerData = {
-        secondsLeft: gameState.turnInfo.secondsLeft,
-        totalSeconds: gameState.turnInfo.totalSeconds
+      // Get updated game state after turn end
+      const updatedGameState = await Game.getState(parseInt(gameId));
+      const updatedTimerData = {
+        secondsLeft: updatedGameState.turnInfo.secondsLeft,
+        totalSeconds: updatedGameState.turnInfo.totalSeconds
       };
       
-      console.log(`⏰ [PING] Sending timer data:`, timerData);
+      // Broadcast updated state to all players
+      const { broadcastGameStateToAll } = await import("./broadcast-game-state");
+      await broadcastGameStateToAll(parseInt(gameId), io);
       
+      io.to(userId.toString()).emit(`game:${gameId}:timer-update`, updatedTimerData);
+    } else {
       io.to(userId.toString()).emit(`game:${gameId}:timer-update`, timerData);
       io.to(`game:${gameId}`).emit(`game:${gameId}:timer-sync`, {
         userId,
         ...timerData
       });
     }
+  }
 
+  response.sendStatus(200);
 };

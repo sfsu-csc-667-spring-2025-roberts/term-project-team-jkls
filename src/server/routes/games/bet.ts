@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { Game } from "../../db";
 import db from "../../db/connection";
 import { broadcastGameStateToPlayer } from "./broadcast-game-state";
-import { updateBalance } from "../../db/games/update-balance";
+import { canAffordBet, updateUserBalance } from "../../services/balance-refill";
 
 export const bet = async (request: Request, response: Response) => {
   const { gameId } = request.params;
@@ -21,20 +21,19 @@ export const bet = async (request: Request, response: Response) => {
       });
     }
     
-    const { balance } = await db.one(
-      `SELECT balance FROM game_users WHERE game_id = $1 AND user_id = $2`,
-      [gameId, userId]
-    );
-    
-    if (parseInt(balance) < amount) {
+    // Check if user can afford the bet using account balance
+    const canAfford = await canAffordBet(userId, amount);
+    if (!canAfford) {
       return response.status(400).json({ 
         success: false, 
         error: "Insufficient balance" 
       });
     }
     
-    await updateBalance(parseInt(gameId), userId, -amount);
+    // Deduct from user's account balance
+    const newBalance = await updateUserBalance(userId, -amount);
     
+    // Update game bet
     await db.none(
       `UPDATE games
        SET current_bet = $2
@@ -42,6 +41,7 @@ export const bet = async (request: Request, response: Response) => {
       [gameId, amount]
     );
     
+    // Record the bet
     await db.none(
       `INSERT INTO game_bets (game_id, user_id, amount, round)
        VALUES ($1, $2, $3, (SELECT current_round FROM games WHERE id = $1))`,
@@ -52,9 +52,11 @@ export const bet = async (request: Request, response: Response) => {
     io.to(`game:${gameId}`).emit(`game:${gameId}:bet`, {
       userId,
       amount,
+      newBalance,
       timestamp: new Date()
     });
     
+    // Broadcast updated game state to all players
     await Promise.all(
       players.map(player => 
         broadcastGameStateToPlayer(parseInt(gameId), `${player.id}`, io)
@@ -63,7 +65,8 @@ export const bet = async (request: Request, response: Response) => {
     
     return response.json({ 
       success: true, 
-      message: "Bet placed successfully" 
+      message: "Bet placed successfully",
+      newBalance
     });
     
   } catch (error) {

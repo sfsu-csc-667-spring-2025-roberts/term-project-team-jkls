@@ -2,12 +2,21 @@ import { Server } from "socket.io";
 import { Game } from "../../db";
 
 interface OtherPlayerInfo {
+  id: number;
+  username: string;
+  email: string;
+  seat: number;
+  isCurrent: boolean;
   handCount: number;
-  // Add other properties as needed
+  stockPileCount: number;
+  discardPiles: any[];
+  stockPileTop: any;
+  balance: number;
 }
 
 interface PlayerGameState {
   currentPlayer: any;
+  currentTurnPlayer: any;
   players: Record<string, OtherPlayerInfo>;
   buildPiles: any;
   currentBet: number;
@@ -19,7 +28,7 @@ export const broadcastGameStateToPlayer = async (
   gameId: number,
   userId: string,
   io: Server
-): Promise<void> => {
+): Promise<void> => {  
   const gameState = await Game.getState(gameId);
   
   const currentPlayer = gameState.players[userId];
@@ -27,6 +36,9 @@ export const broadcastGameStateToPlayer = async (
   if (currentPlayer === undefined) {
     return;
   }
+
+  // Find who has the current turn
+  const currentTurnPlayer = Object.values(gameState.players).find(p => p.isCurrent);
 
   const players: Record<string, OtherPlayerInfo> = {};
   Object.keys(gameState.players)
@@ -41,6 +53,7 @@ export const broadcastGameStateToPlayer = async (
 
   const playerGameState: PlayerGameState = {
     currentPlayer,
+    currentTurnPlayer,
     players,
     buildPiles: gameState.buildPiles,
     currentBet: gameState.currentBet,
@@ -54,7 +67,7 @@ export const broadcastGameStateToPlayer = async (
 export const broadcastGameStateToAll = async (
   gameId: number,
   io: Server
-): Promise<void> => {
+): Promise<void> => {  
   const gameState = await Game.getState(gameId);
   
   for (const userId of Object.keys(gameState.players)) {
