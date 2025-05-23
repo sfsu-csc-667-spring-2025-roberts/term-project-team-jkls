@@ -20,6 +20,7 @@ import { join } from "./join";
 // import { playCard } from "./play-card";
 import { setCurrentPlayer } from "./set-current-player";
 import { start } from "./start-game";
+import { removePlayer } from "./remove-player";
 
 export * as cardLocations from "./constants";
 
@@ -32,7 +33,7 @@ getState,
   getAvailableGames,
 
   getCurrentGames,
-
+  removePlayer,
   getPlayers,
 
   hasStarted,

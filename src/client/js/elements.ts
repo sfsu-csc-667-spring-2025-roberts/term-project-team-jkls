@@ -2,7 +2,7 @@
 export const CHAT_FORM = "#chat form";
 export const CHAT_INPUT = "#chat input";
 export const CHAT_MESSAGES = "#chat #messages";
-export const OVERLAY = "#overlay";
+export const OVERLAY = "#game-table-waiting-overlay";
 export const START_GAME_BUTTON = "#start-game-button";
 export const CREATE_GAME = "#create-game";
 export const CREATE_GAME_BUTTON = "#create-game-button";

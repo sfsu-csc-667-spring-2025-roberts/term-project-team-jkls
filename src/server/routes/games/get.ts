@@ -1,25 +1,31 @@
 import { Request, Response } from "express";
 import { Game } from "../../db";
-import {
-  EAST_PILE,
-  NORTH_PILE,
-  SOUTH_PILE,
-  WEST_PILE,
-} from "../../db/games/constants";
 
 export const get = async (request: Request, response: Response) => {
-  const { gameId: paramsGameId } = request.params;
-  const gameId = parseInt(paramsGameId);
-
+  const { gameId } = request.params;
   // @ts-ignore
   const { id: userId } = request.session.user!;
-  const hostId = await Game.getHost(gameId);
-  const hasStarted = await Game.hasStarted(gameId);
+  
+  try {
+    request.app.get("io").in(request.sessionID).socketsJoin(`game:${gameId}`);
 
-  response.render("games", {
-    gameId,
-    isHost: hostId === userId,
-    hasStarted,
-    piles: { NORTH_PILE, EAST_PILE, SOUTH_PILE, WEST_PILE },
-  });
+    const hasStarted = await Game.hasStarted(parseInt(gameId));
+    const gameInfo = await Game.getInfo(parseInt(gameId));
+    const players = await Game.getPlayers(parseInt(gameId));
+    const hostId = await Game.getHost(parseInt(gameId));
+    
+    const isHost = hostId === userId;
+    
+    response.render("games", {
+      hasStarted,
+      isHost,
+      min_players: gameInfo.min_players,
+      players,
+      hostId,
+      gameId
+    });
+  } catch (error) {
+    console.error(error);
+    response.redirect("/lobby");
+  }
 };

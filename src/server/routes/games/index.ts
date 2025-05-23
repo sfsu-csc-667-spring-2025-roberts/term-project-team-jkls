@@ -10,6 +10,7 @@ import { ping } from "./ping";
 // import { play } from "./play";
 import { start } from "./start";
 import { validatePassword } from "./validate-password";
+import { leave } from "./leave";
 
 const router = express.Router();
 
@@ -21,6 +22,7 @@ router.post("/:gameId/validate-password", (req, res, next) => {
   validatePassword(req, res).catch(next);
 });
 router.post("/:gameId/ping", ping);
+router.post("/:gameId/leave", leave);
 // router.post("/:gameId/draw", draw);
 // router.post("/:gameId/discard", discard);
 // router.post("/:gameId/play", play);
