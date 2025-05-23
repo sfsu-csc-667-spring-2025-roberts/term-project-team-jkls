@@ -333,6 +333,97 @@ body {
     background-color: rgb(236, 236, 236);
 }
 
+.waiting-players-list {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    padding: 15px;
+    max-width: 500px;
+    margin: 0 auto 20px auto;
+    text-align: center;
+}
+
+.waiting-players-list h2 {
+    color: white;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    font-family: "Russo One", sans-serif;
+}
+
+.player-list {
+    list-style: none;
+    padding: 0;
+}
+
+.player-list-item {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 1.2em;
+    display: flex;
+    justify-content: space-between;
+    border-left: 4px solid #22989c;
+    margin: 5px 0;
+}
+
+.player-list-item.host {
+    border-left: 4px solid #ff8b77;
+    font-weight: bold;
+}
+
+#start-game-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: #fff;
+    border-radius: 25px;
+    font-size: 1.5em;
+    cursor: pointer;
+    margin-bottom: 20px;
+    margin-top: 12px;
+    border: none;
+    text-align: center;
+    transition: all 0.15s ease;
+    width: 100%;
+}
+
+#start-game-button:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#start-game-button:disabled {
+    background-color: #6b6b6b;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+#leave-game-button {
+  padding: 8px 15px;
+  background-color: #f44336;
+  color: #fff;
+  border-radius: 25px;
+  font-size: 1.2em;
+  cursor: pointer;
+  border: none;
+  text-align: center;
+  transition: all 0.15s ease;
+  margin-bottom: 15px;
+}
+
+#leave-game-button:hover {
+  background-color: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.game-table-waiting-overlay #start-game-button {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
 .play-area-before-start {
     display: flex;
     flex-direction: column;
@@ -428,9 +519,9 @@ body {
 
 .player.left .hand,
 .player.right .hand {
-  display: flex;
-  flex-direction: column;
-  padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    padding: 0 !important;
 }
 
 .player.left .card,
@@ -470,40 +561,40 @@ body {
 }
 
 .player:not(.bottom) .game-action-container {
-  display: none !important;
+    display: none !important;
 }
 
 .player.bottom .game-action-container {
-  display: flex;
-  gap: 10px;
+    display: flex;
+    gap: 10px;
 }
 
 .game-action {
-  padding: 8px 15px;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s ease;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .call-button {
-  background-color: #4CAF50;
-  color: white;
+    background-color: #4CAF50;
+    color: white;
 }
 
 .discard-button {
-  background-color: #2196F3;
-  color: white;
+    background-color: #2196F3;
+    color: white;
 }
 
 .fold-button {
-  background-color: #f44336;
-  color: white;
+    background-color: #f44336;
+    color: white;
 }
 
 .game-action:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .player-area {
@@ -581,9 +672,10 @@ body {
     flex: 1;
 }
 
-.game-table-waiting-overlay {
+#game-table-waiting-overlay {
     height: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
@@ -661,7 +753,6 @@ body {
     align-items: center;
     gap: 10px;
     position: absolute;
-    top: 15px;
     right: 15px;
 }
 

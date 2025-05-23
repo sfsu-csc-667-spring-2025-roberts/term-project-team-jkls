@@ -10,6 +10,14 @@ export const join = async (request: Request, response: Response) => {
   try {
     await Game.join(userId, parseInt(gameId), password);
 
+    request.app.get("io").socketsJoin(`game:${gameId}`);
+
+    const io = request.app.get("io");
+    io.to(`game:${gameId}`).emit(`game:${gameId}:player-joined`, {
+      userId,
+      timestamp: new Date()
+    });
+
     response.redirect(`/games/${gameId}`);
   } catch (error) {
     console.log({ error });

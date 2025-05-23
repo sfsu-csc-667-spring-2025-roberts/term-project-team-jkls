@@ -1,7 +1,22 @@
 <div id="game-table-waiting-overlay">
+  <div class="waiting-players-list">
+    <h2>Players in Lobby: <%= players.length %> / <%= min_players %> needed</h2>
+    <ul class="player-list">
+      <% players.forEach(player => { %>
+        <li class="player-list-item <%= player.id === hostId ? 'host' : '' %>">
+          <%= player.username %> <%= player.id === hostId ? '(Host)' : '' %>
+        </li>
+      <% }); %>
+    </ul>
+  </div>
+  <% if(!isHost) { %>
+  <button id="leave-game-button" class="leave-game">Leave Game</button>
+  <% } %>
   <% if(isHost) { %>
-  <button id="start-game-button" class="shown">Start Game</button>
+    <button id="start-game-button" class="shown" <%= players.length < min_players ? 'disabled' : '' %>>
+      Start Game <%= players.length < min_players ? `(Need ${min_players - players.length} more)` : '' %>
+    </button>
   <% } else { %>
-  <strong class="waiting-for-host">Waiting for host...</strong>
+    <strong class="waiting-for-host">Waiting for host to start the game...</strong>
   <% } %>
 </div>

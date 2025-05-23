@@ -15,6 +15,8 @@ export const create = async (request: Request, response: Response) => {
       userId,
     );
 
+    request.app.get("io").socketsJoin(`game:${gameId}`);
+
     response.redirect(`/games/${gameId}`);
   } catch (error) {
     console.log({ error });
