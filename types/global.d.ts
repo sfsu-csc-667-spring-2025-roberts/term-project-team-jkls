@@ -40,6 +40,7 @@ export type Card = {
 export type Player = {
   id: number;
   email: string;
+  username: string;
   seat: number;
   isCurrent: boolean;
 };
@@ -49,6 +50,8 @@ export type PlayerInfo = Player & {
   stockPileTop: Card;
   discardPiles: Card[][];
   stockPileCount: number;
+  balance: number;
+  currentBet: number;
 };
 
 export type OtherPlayerInfo = Player & {
@@ -56,18 +59,30 @@ export type OtherPlayerInfo = Player & {
   stockPileCount: number;
   discardPiles: Card[][];
   stockPileTop: Card;
+  balance: number;
+};
+
+export type TurnTimerInfo = {
+  secondsLeft: number;
+  totalSeconds: number;
 };
 
 export type GameState = {
   name: string;
   buildPiles: Card[];
   players: Record<string, PlayerInfo>;
+  currentBet: number;
+  currentRound: number;
+  turnInfo: TurnTimerInfo;
 };
 
 export type PlayerGameState = {
   currentPlayer: PlayerInfo;
   players: Record<string, OtherPlayerInfo>;
   buildPiles: Card[];
+  currentBet: number;
+  currentRound: number;
+  turnInfo: TurnTimerInfo;
 };
 
 export type GetGameInfoResponse = Pick<

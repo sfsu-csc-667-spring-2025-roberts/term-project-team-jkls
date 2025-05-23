@@ -1,34 +1,38 @@
 import { Request, Response } from "express";
 import { Game } from "../../db";
-import { broadcastGameState } from "./broadcast-game-state";
+import { broadcastGameStateToAll } from "./broadcast-game-state";
+import { startTurnTimer } from "../../services/turn-timer";
 
 export const start = async (request: Request, response: Response) => {
-  const { gameId: paramsGameId } = request.params;
-  const gameId = parseInt(paramsGameId);
-
+  const { gameId } = request.params;
   // @ts-ignore
   const { id: userId } = request.session.user!;
-  const hostId = await Game.getHost(gameId);
 
-  if (hostId !== userId) {
-    response.status(200).send();
-    return;
-  }
+  try {
+    const hasStarted = await Game.hasStarted(parseInt(gameId));
+    if (hasStarted) {
+      return response.status(400).send("Game has already started");
+    }
 
-  const gameInfo = await Game.getInfo(gameId);
+    const hostId = await Game.getHost(parseInt(gameId));
+    if (hostId !== userId) {
+      return response.status(400).send("Only the host can start the game");
+    }
 
-  if (gameInfo.player_count < gameInfo.min_players) {
+    console.log(`🚀 Starting game ${gameId}...`);
+    await Game.start(parseInt(gameId));
+
     const io = request.app.get("io");
-    io.to(`game-${gameId}`).emit("error", {
-      message: `Not enough players to start the game. Minimum players required: ${gameInfo.min_players}`,
-    });
 
-    response.status(200).send();
-    return;
+    console.log(`📡 Broadcasting initial game state...`);
+    await broadcastGameStateToAll(parseInt(gameId), io);
+    
+    console.log(`⏰ Starting turn timer...`);
+    await startTurnTimer(parseInt(gameId), io);
+
+    return response.sendStatus(200);
+  } catch (error) {
+    console.log({ error });
+    return response.status(500).send("Server error");
   }
-
-  await Game.start(gameId);
-  await broadcastGameState(gameId, request.app.get("io"));
-
-  response.status(200).send();
 };

@@ -1,0 +1,42 @@
+<div id="game-status-overlay" class="<%= hasStarted ? 'visible' : '' %>">
+  <div class="status-container">
+    <div class="status-header">
+      <h2>Game Status</h2>
+    </div>
+    <div class="status-body">
+      <div class="status-row">
+        <span class="status-label">Current Turn:</span>
+        <span id="current-player-name" class="status-value">Waiting...</span>
+      </div>
+      <div class="status-row timer-row">
+        <span class="status-label">Time Left:</span>
+        <div class="timer-container">
+          <span id="turn-timer" class="status-value">45</span>
+          <div id="timer-progress" class="timer-progress" style="width: 100%;"></div>
+        </div>
+      </div>
+      <div class="status-row">
+        <span class="status-label">Current Bet:</span>
+        <span id="current-bet" class="status-value">$0</span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">Round:</span>
+        <span id="current-round" class="status-value">1</span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">Your Balance:</span>
+        <span id="player-balance" class="status-value">$10,000</span>
+      </div>
+      <div class="status-row betting-row">
+        <span class="status-label">Make Bet:</span>
+        <div class="betting-controls">
+          <input type="number" id="bet-amount" min="0" step="100" value="100" disabled>
+          <button id="place-bet-button" disabled>Place Bet</button>
+        </div>
+      </div>
+      <div class="status-row actions-row">
+        <button id="end-turn-button" class="action-button" disabled>End Turn</button>
+      </div>
+    </div>
+  </div>
+</div>

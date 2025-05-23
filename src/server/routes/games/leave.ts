@@ -3,6 +3,7 @@ import { Game } from "../../db";
 
 export const leave = async (request: Request, response: Response) => {
   const { gameId } = request.params;
+  // @ts-ignore
   const userId = request.session.user!.id;
 
   try {
@@ -32,6 +33,9 @@ export const leave = async (request: Request, response: Response) => {
     });
 
     io.in(request.sessionID).socketsLeave(`game:${gameId}`);
+
+    await Game.deleteEmptyGame(parseInt(gameId));
+
 
     return response.redirect('/lobby');
   } catch (error) {

@@ -1,5 +1,7 @@
 import { GameState, PlayerInfo } from "global";
 import db from "../connection";
+import { getBetInfo } from "./get-bet-info";
+
 import {
   DISCARD_1,
   DISCARD_2,
@@ -49,13 +51,17 @@ export const getState = async (gameId: number): Promise<GameState> => {
   const { name } = await getInfo(gameId);
 
   const players = (await getPlayers(gameId)).map(
-    ({ id, email, seat, is_current: isCurrent }) => ({
+    ({ id, email, username, seat, is_current: isCurrent }) => ({
       id,
       email,
+      username,
       seat,
       isCurrent,
     }),
   );
+
+  const betInfo = await getBetInfo(gameId);
+
 
   const playerInfo: Record<string, PlayerInfo> = {};
 
@@ -63,6 +69,11 @@ export const getState = async (gameId: number): Promise<GameState> => {
     const player = players[playerIndex];
 
     const { id: userId } = players[playerIndex];
+
+    const { balance } = await db.one(
+      `SELECT balance FROM game_users WHERE game_id = $1 AND user_id = $2`,
+      [gameId, userId]
+    );
 
     const hand = await db.manyOrNone(GET_CARD_SQL, {
       gameId,
@@ -93,6 +104,8 @@ export const getState = async (gameId: number): Promise<GameState> => {
             db.any(GET_CARD_SQL, { gameId, userId, limit: 1, pile }).then((rows) => rows.map(normalizeCard)),
           ),
         ),
+        balance: parseInt(balance),
+        currentBet: betInfo.playerBets[userId] || 0,
       };
     } catch (error) {
       console.error({ error });
@@ -112,5 +125,25 @@ export const getState = async (gameId: number): Promise<GameState> => {
       }),
     ),
     players: playerInfo,
+    currentBet: betInfo.currentBet,
+    currentRound: betInfo.currentRound,
+    turnInfo: await db.oneOrNone(
+      `SELECT 
+        turn_start_time, 
+        turn_duration,
+        EXTRACT(EPOCH FROM (NOW() - turn_start_time)) as elapsed_seconds
+       FROM games WHERE id = $1`,
+      [gameId]
+    ).then(data => {
+      if (!data) return { secondsLeft: 45, totalSeconds: 45 };
+      
+      const elapsedSeconds = Math.floor(parseFloat(data.elapsed_seconds));
+      const secondsLeft = Math.max(0, data.turn_duration - elapsedSeconds);
+      
+      return {
+        secondsLeft,
+        totalSeconds: data.turn_duration
+      };
+    })
   };
 };

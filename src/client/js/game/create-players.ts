@@ -1,79 +1,58 @@
 import { Card, OtherPlayerInfo, PlayerGameState, PlayerInfo } from "global";
-import { cloneTemplate } from "../utils";
 import { createCard } from "./create-card";
 
-const playerPositions: Record<number, string> = {};
-const POSITION_RINGS = [
-  [],
-  ["bottom"],
-  ["bottom", "top"],
-  ["bottom", "left", "right"],
-  ["bottom", "left", "top", "right"],
-];
+export const currentPlayer = (player: PlayerInfo) => {
+  const template = document
+    .querySelector<HTMLTemplateElement>("#player-template")!
+    .content.cloneNode(true) as HTMLElement;
 
-const initSeatOrder = (gs: PlayerGameState) => {
-  const seats = [
-    ...Object.entries(gs.players).map(([id, { seat }]) => ({
-      id: parseInt(id, 10),
-      seat,
-    })),
-    { id: gs.currentPlayer.id, seat: gs.currentPlayer.seat },
-  ].sort((a, b) => a.seat - b.seat);
+  const div = template.querySelector<HTMLDivElement>(".player")!;
+  div.classList.add("bottom");
 
-  /* rotate so current player is first */
-  const idx = seats.findIndex((p) => p.id === gs.currentPlayer.id);
-  const ordered = seats.slice(idx).concat(seats.slice(0, idx));
+  div.dataset.userId = player.id.toString();
 
-  const ring = POSITION_RINGS[ordered.length];
-  ordered.forEach((p, i) => (playerPositions[p.id] = ring[i]));
-};
+  if (player.hand) {
+    const handDiv = div.querySelector<HTMLDivElement>(".hand")!;
 
-const positionFor = (id: number, gs: PlayerGameState) => {
-  if (Object.keys(playerPositions).length !== Object.keys(gs.players).length + 1) {
-    initSeatOrder(gs);
+    player.hand.forEach((card: Card) => {
+      const cardDiv = createCard(card);
+      handDiv.appendChild(cardDiv);
+    });
   }
-  return playerPositions[id];
-};
-
-const containerForPlayer = (position: string) => {
-  const div = cloneTemplate("#player-template")!.firstElementChild as HTMLDivElement;
-  div.classList.add(position);
-  return div;
-};
-
-const fiveBackCards = () => {
-  const frag = document.createDocumentFragment();
-  for (let i = 0; i < 5; i++) {
-    frag.appendChild(cloneTemplate("#card-back-template"));
-  }
-  return frag;
-};
-
-export const currentPlayer = ({
-  hand,
-}: PlayerInfo) => {
-  const div = containerForPlayer("bottom");
-  const handArea = div.querySelector<HTMLDivElement>(".hand")!;
-
-  hand?.forEach((card: Card) => handArea.appendChild(createCard(card)));
-
-  handArea.addEventListener("click", (e) => {
-    const cardDiv = (e.target as HTMLElement).closest<HTMLDivElement>(".card");
-    if (!cardDiv) return;
-
-    handArea.querySelectorAll(".card").forEach((c) => c.classList.remove("selected"));
-    cardDiv.classList.add("selected");
-  });
 
   return div;
 };
 
+export const otherPlayer = (player: OtherPlayerInfo, gameState: PlayerGameState) => {
+  const template = document
+    .querySelector<HTMLTemplateElement>("#player-template")!
+    .content.cloneNode(true) as HTMLElement;
 
-export const otherPlayer = (
-  p: OtherPlayerInfo,
-  gs: PlayerGameState,
-) => {
-  const div = containerForPlayer(positionFor(p.id, gs));
-  div.querySelector<HTMLDivElement>(".hand")!.appendChild(fiveBackCards());
+  const div = template.querySelector<HTMLDivElement>(".player")!;
+
+  div.dataset.userId = player.id.toString();
+
+  switch (player.seat) {
+    case 1:
+      div.classList.add("top");
+      break;
+    case 2:
+      div.classList.add("left");
+      break;
+    case 3:
+      div.classList.add("right");
+      break;
+  }
+
+  const handDiv = div.querySelector<HTMLDivElement>(".hand")!;
+  handDiv.querySelector<HTMLDivElement>(".hand-count")!.textContent = `${
+    player.handCount || 0
+  } cards`;
+
+  for (let i = 0; i < (player.handCount || 0); i++) {
+    const cardDiv = createCard();
+    handDiv.appendChild(cardDiv);
+  }
+
   return div;
 };

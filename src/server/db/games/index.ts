@@ -21,24 +21,25 @@ import { join } from "./join";
 import { setCurrentPlayer } from "./set-current-player";
 import { start } from "./start-game";
 import { removePlayer } from "./remove-player";
+import { deleteEmptyGame } from "./delete-empty-game";
+import { broadcastGameState } from "./broadcast-game-state";
 
 export * as cardLocations from "./constants";
 
 export default {
   create,
-getState,
+  getState,
   getHost,
   getInfo,
   dealCards,
   getAvailableGames,
-
   getCurrentGames,
   removePlayer,
   getPlayers,
-
   hasStarted,
   join,
-
+  deleteEmptyGame,
   setCurrentPlayer,
   start,
+  broadcastGameState,
 };

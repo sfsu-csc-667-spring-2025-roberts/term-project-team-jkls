@@ -14,30 +14,34 @@
         <%- include('shared/header') %>
           <div id="game-area-content">
             <section id="game-table">
-                <% if(!hasStarted) { %>
-                  <%- include('games/waiting-to-start-overlay') %>
+              <% if(!hasStarted) { %>
+                <%- include('games/waiting-to-start-overlay') %>
+                <%- include('games/status-overlay') %>
                   <div id="play-area" class="play-area-before-start">
-                    
+
                   </div>
                   <% } else { %>
-                    <div id="play-area" class="started play-area-after-start"></div>
+                    <%- include('games/status-overlay') %>
+                    <div id="play-area" class="started play-area-after-start">
+                            
+                    </div>
                     <% } %>
             </section>
 
 
             <!-- CARD FACE -->
-<template id="card-face-template">
-  <div class="card" data-card-id="">
-    <img class="card-img" src="" alt="">
-  </div>
-</template>
+            <template id="card-face-template">
+              <div class="card" data-card-id="">
+                <img class="card-img" src="" alt="">
+              </div>
+            </template>
 
-<!-- DECK BACK -->
-<template id="card-back-template">
-  <div class="card back">
-    <img src="/assets/card-images/back.png" alt="Deck">
-  </div>
-</template>
+            <!-- DECK BACK -->
+            <template id="card-back-template">
+              <div class="card back">
+                <img src="/assets/card-images/back.png" alt="Deck">
+              </div>
+            </template>
 
 
             <template id="player-template">
@@ -71,8 +75,31 @@
         }
       });
     }
+    
+    const deleteButton = document.getElementById('delete-game-button');
+    if (deleteButton) {
+      deleteButton.addEventListener('click', () => {
+        if (confirm('Are you sure you want to delete this game? This cannot be undone.')) {
+          const gameId = window.location.pathname.split('/').pop();
+          fetch(`/games/${gameId}/delete`, { 
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              window.location.href = '/lobby';
+            } else {
+              alert(data.message || 'Error deleting game');
+            }
+          })
+          .catch(err => console.error('Error deleting game:', err));
+        }
+      });
+    }
   </script>
 </body>
 
 </html>
-
