@@ -11,6 +11,8 @@
   </div>
   <% if(!isHost) { %>
   <button id="leave-game-button" class="leave-game">Leave Game</button>
+  <% } else { %>
+  <button id="delete-game-button" class="delete-game">Delete Game</button>
   <% } %>
   <% if(isHost) { %>
     <button id="start-game-button" class="shown" <%= players.length < min_players ? 'disabled' : '' %>>

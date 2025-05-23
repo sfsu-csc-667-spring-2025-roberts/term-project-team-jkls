@@ -1,72 +1,63 @@
-import { Card, GameState, OtherPlayerInfo, PlayerInfo } from "global";
 import { Server } from "socket.io";
 import { Game } from "../../db";
 
-const createPlayerState = (
-  game: GameState,
-  currentPlayer: PlayerInfo,
-  buildPiles: Card[],
-) => {
-  const players = Object.entries(game.players)
-    .filter(([playerId]) => {
-      return parseInt(playerId) !== currentPlayer.id;
-    })
-    .reduce(
-      (acc, [playerId, playerInfo]) => {
-        const {
-          hand,
-          stockPileTop,
-          discardPiles,
-          stockPileCount,
-          isCurrent,
-          ...rest
-        } = playerInfo;
+interface OtherPlayerInfo {
+  handCount: number;
+  // Add other properties as needed
+}
 
-        acc[playerId] = {
-          ...rest,
-          handCount: hand?.length ?? 0,
-          discardPiles,
-          stockPileCount,
-          stockPileTop,
-          isCurrent,
-        };
-
-        return acc;
-      },
-      {} as Record<string, OtherPlayerInfo>,
-    );
-
-  return {
-    players,
-    currentPlayer,
-    buildPiles,
-  };
-};
+interface PlayerGameState {
+  currentPlayer: any;
+  players: Record<string, OtherPlayerInfo>;
+  buildPiles: any;
+  currentBet: number;
+  currentRound: number;
+  turnInfo: any;
+}
 
 export const broadcastGameStateToPlayer = async (
   gameId: number,
-  playerId: string,
-  io: Server,
-) => {
+  userId: string,
+  io: Server
+): Promise<void> => {
   const gameState = await Game.getState(gameId);
+  
+  const currentPlayer = gameState.players[userId];
 
-  io.to(playerId).emit(
-    `game:${gameId}:updated`,
-    createPlayerState(
-      gameState,
-      gameState.players[playerId],
-      gameState.buildPiles,
-    ),
-  );
+  if (currentPlayer === undefined) {
+    return;
+  }
+
+  const players: Record<string, OtherPlayerInfo> = {};
+  Object.keys(gameState.players)
+    .filter((key) => key !== userId)
+    .forEach((key) => {
+      const { hand, ...rest } = gameState.players[key];
+      players[key] = {
+        ...rest,
+        handCount: hand?.length || 0,
+      };
+    });
+
+  const playerGameState: PlayerGameState = {
+    currentPlayer,
+    players,
+    buildPiles: gameState.buildPiles,
+    currentBet: gameState.currentBet,
+    currentRound: gameState.currentRound,
+    turnInfo: gameState.turnInfo
+  };
+
+  io.to(userId).emit(`game:${gameId}:updated`, playerGameState);
 };
 
-export const broadcastGameState = async (gameId: number, io: Server) => {
+export const broadcastGameStateToAll = async (
+  gameId: number,
+  io: Server
+): Promise<void> => {
   const gameState = await Game.getState(gameId);
-
-  Object.entries(gameState.players).forEach(([playerId, playerInfo]) => {
-    io.to(playerId).emit(
-      `game:${gameId}:updated`,
-      createPlayerState(gameState, playerInfo, gameState.buildPiles),
-    );
-  });
+  
+  for (const userId of Object.keys(gameState.players)) {
+    await broadcastGameStateToPlayer(gameId, userId, io);
+  }
 };
