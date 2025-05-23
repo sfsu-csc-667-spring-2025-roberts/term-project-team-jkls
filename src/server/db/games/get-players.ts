@@ -1,8 +1,18 @@
 import { DbGameUser, User } from "global";
 import db from "../connection";
 
+
+// WITH PROFILE PIC
+// export const SQL = `
+// SELECT users.id, users.email, users.profile_pic, game_users.*
+// FROM users, game_users 
+// WHERE users.id=game_users.user_id
+// AND game_users.game_id=$1
+// ORDER BY seat
+// `;
+
 export const SQL = `
-SELECT users.id, users.email, users.profile_pic, game_users.*
+SELECT users.id, users.email, users.username, game_users.*
 FROM users, game_users 
 WHERE users.id=game_users.user_id
 AND game_users.game_id=$1

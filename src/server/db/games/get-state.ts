@@ -15,6 +15,18 @@ import {
 import { getInfo } from "./get-info";
 import { getPlayers } from "./get-players";
 
+const rankToValue: Record<string, number> = {
+  "2": 2, "3": 3, "4": 4, "5": 5,
+  "6": 6, "7": 7, "8": 8, "9": 9, "10": 10,
+  jack: 11, queen: 12, king: 13, ace: 1,
+};
+
+const normalizeCard = (raw: any) =>
+  raw && {
+    ...raw,
+    value: rankToValue[raw.rank] ?? 0,
+  };
+
 const GET_CARD_SQL = `
 SELECT cards.*, game_cards.card_order 
 FROM cards, game_cards 
@@ -55,10 +67,11 @@ export const getState = async (gameId: number): Promise<GameState> => {
     const hand = await db.manyOrNone(GET_CARD_SQL, {
       gameId,
       userId,
-      limit: 6,
+      limit: 5,
       pile: PLAYER_HAND,
-    });
-    const stockPileTop = await db.one(GET_CARD_SQL, {
+    }).then(rows => rows.map(normalizeCard));
+
+    const stockPileTop = await db.oneOrNone(GET_CARD_SQL, {
       gameId,
       userId,
       limit: 1,
@@ -77,7 +90,7 @@ export const getState = async (gameId: number): Promise<GameState> => {
         stockPileCount: parseInt(stockPileCount),
         discardPiles: await Promise.all(
           [DISCARD_1, DISCARD_2, DISCARD_3, DISCARD_4].map((pile) =>
-            db.any(GET_CARD_SQL, { gameId, userId, limit: 1, pile }),
+            db.any(GET_CARD_SQL, { gameId, userId, limit: 1, pile }).then((rows) => rows.map(normalizeCard)),
           ),
         ),
       };
@@ -95,7 +108,7 @@ export const getState = async (gameId: number): Promise<GameState> => {
           pile,
           userId: 0,
           limit: 1,
-        });
+        }).then(normalizeCard);
       }),
     ),
     players: playerInfo,

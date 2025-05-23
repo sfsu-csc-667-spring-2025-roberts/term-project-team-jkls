@@ -11,7 +11,7 @@ export type User = {
 
 const register = async (email: string, password: string, username: string, profilePic: string ) => {
     const encryptedPassword = await bcrypt.hash(password, 10);
-    const {id} = await db.one("INSERT INTO users (email, password, username, profile_pic) VALUES ($1, $2, $3, $4) RETURNING id", [email, encryptedPassword, username, profilePic]);
+    const {id} = await db.one("INSERT INTO users (email, password, username, gravatar) VALUES ($1, $2, $3, $4) RETURNING id", [email, encryptedPassword, username, profilePic]);
 
     const user = await db.one<User>("SELECT * FROM users WHERE id = $1", [id]);
 

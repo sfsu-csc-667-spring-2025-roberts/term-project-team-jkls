@@ -1,5 +1,8 @@
 import io from "socket.io-client";
 
-const socket = io();
+export const socket = io();
 
-export { socket };
+export const waitForSocket = new Promise<void>((resolve) => {
+  if (socket.connected) resolve();
+  else socket.on("connect", () => resolve());
+});

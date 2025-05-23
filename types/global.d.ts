@@ -32,6 +32,9 @@ export type GameInfo = {
 export type Card = {
   id: number;
   value: number;
+  image_url: string;
+  rank: string;
+  suit: string;
 };
 
 export type Player = {

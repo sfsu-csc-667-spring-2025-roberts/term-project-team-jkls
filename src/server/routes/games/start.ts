@@ -6,6 +6,7 @@ export const start = async (request: Request, response: Response) => {
   const { gameId: paramsGameId } = request.params;
   const gameId = parseInt(paramsGameId);
 
+  // @ts-ignore
   const { id: userId } = request.session.user!;
   const hostId = await Game.getHost(gameId);
 

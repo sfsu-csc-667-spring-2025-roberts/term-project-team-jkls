@@ -14,44 +14,31 @@
         <%- include('shared/header') %>
           <div id="game-area-content">
             <section id="game-table">
-              <%- include('games/waiting-to-start-overlay') %>
                 <% if(!hasStarted) { %>
-                  <div id="play-area"></div>
+                  <%- include('games/waiting-to-start-overlay') %>
+                  <div id="play-area" class="play-area-before-start">
+                    
+                  </div>
                   <% } else { %>
-                    <div id="play-area" class="started"></div>
+                    <div id="play-area" class="started play-area-after-start"></div>
                     <% } %>
             </section>
 
-            <template id="draw-pile-area-template">
-              <div class="center-area">
-                <div class="draw-pile">
-                  <div class="card back">Deck</div>
-                </div>
-                <div class="build-piles">
-                  <div class="build-pile" data-pile-id="<%= piles.NORTH_PILE %>"></div>
-                  <div class="build-pile" data-pile-id="<%= piles.EAST_PILE %>"></div>
-                  <div class="build-pile" data-pile-id="<%= piles.SOUTH_PILE %>"></div>
-                  <div class="build-pile" data-pile-id="<%= piles.WEST_PILE %>"></div>
-                </div>
-              </div>
-            </template>
 
-            <template id="card-number-template">
-              <div class="card number-card" data-number="" data-card-id="">
-                <div class="card-inner">
-                  <div class="card-number"></div>
-                </div>
-              </div>
-            </template>
+            <!-- CARD FACE -->
+<template id="card-face-template">
+  <div class="card" data-card-id="">
+    <img class="card-img" src="" alt="">
+  </div>
+</template>
 
-            <template id="card-skipbo-template">
-              <div class="card skipbo" data-card-id="">
-                <div class="card-inner">
-                  <div class="starburst"></div>
-                  <div class="card-number">Skip-Bo</div>
-                </div>
-              </div>
-            </template>
+<!-- DECK BACK -->
+<template id="card-back-template">
+  <div class="card back">
+    <img src="/assets/card-images/back.png" alt="Deck">
+  </div>
+</template>
+
 
             <template id="player-template">
               <div class="player">
