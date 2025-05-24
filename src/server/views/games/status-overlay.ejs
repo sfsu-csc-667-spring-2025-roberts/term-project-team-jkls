@@ -24,18 +24,15 @@
         <span id="current-round" class="status-value">1</span>
       </div>
       <div class="status-row">
-        <span class="status-label">Your Balance:</span>
-        <span id="player-balance" class="status-value">$10,000</span>
+        <span class="status-label">Total Pot:</span>
+        <span id="total-pot" class="status-value">$0</span>
       </div>
       <div class="status-row betting-row">
-        <span class="status-label">Make Bet:</span>
+        <span class="status-label">Place Your Bet:</span>
         <div class="betting-controls">
-          <input type="number" id="bet-amount" min="0" step="100" value="100" disabled>
-          <button id="place-bet-button" disabled>Place Bet</button>
+          <input type="number" id="bet-amount" min="1" step="100" value="100" disabled>
+          <button id="place-bet-button" disabled>Bet & End Turn</button>
         </div>
-      </div>
-      <div class="status-row actions-row">
-        <button id="end-turn-button" class="action-button" disabled>End Turn</button>
       </div>
     </div>
   </div>

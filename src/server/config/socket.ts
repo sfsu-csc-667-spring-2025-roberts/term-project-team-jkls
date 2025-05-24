@@ -24,12 +24,10 @@ const configureSockets = (
     socket.join(`${user.id}`);
 
     socket.on("join:game", async (gameId) => {
-      console.log(`User ${user.id} joining game room: game:${gameId}`);
+      console.log(`User [${user.id}] joining game room: game:${gameId}`);
       await socket.join(`game:${gameId}`);
       
-      const sockets = await io.in(`game:${gameId}`).fetchSockets();
-      console.log(`Room game:${gameId} now has ${sockets.length} sockets`);
-      
+      const sockets = await io.in(`game:${gameId}`).fetchSockets();      
       socket.emit("joined:game", { gameId, userId: user.id });
     });
 

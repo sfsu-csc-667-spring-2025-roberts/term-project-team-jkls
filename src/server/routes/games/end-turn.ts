@@ -7,17 +7,11 @@ export const endCurrentTurn = async (request: Request, response: Response) => {
   // @ts-ignore
   const { id: userId } = request.session.user!;
   
-  try {
-    console.log(`🔄 [MANUAL END] User ${userId} trying to end turn for game ${gameId}`);
-    
+  try {    
     const players = await Game.getPlayers(parseInt(gameId));
     const currentPlayer = players.find(p => p.is_current);
     
-    console.log(`🎯 [MANUAL END] Current player:`, currentPlayer);
-    console.log(`👤 [MANUAL END] Requesting user:`, userId);
-    
     if (!currentPlayer || currentPlayer.id !== userId) {
-      console.log(`❌ [MANUAL END] Not your turn - current: ${currentPlayer?.id}, requesting: ${userId}`);
       return response.status(400).json({ 
         success: false, 
         error: "Not your turn" 

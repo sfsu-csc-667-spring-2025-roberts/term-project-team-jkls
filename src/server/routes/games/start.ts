@@ -19,15 +19,12 @@ export const start = async (request: Request, response: Response) => {
       return response.status(400).send("Only the host can start the game");
     }
 
-    console.log(`🚀 Starting game ${gameId}...`);
     await Game.start(parseInt(gameId));
 
     const io = request.app.get("io");
 
-    console.log(`📡 Broadcasting initial game state...`);
     await broadcastGameStateToAll(parseInt(gameId), io);
     
-    console.log(`⏰ Starting turn timer...`);
     await startTurnTimer(parseInt(gameId), io);
 
     return response.sendStatus(200);

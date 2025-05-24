@@ -13,14 +13,14 @@ export const broadcastGameState = async (
   const currentPlayer = gameState.players[userIdStr];
 
   if (currentPlayer === undefined) {
-    console.log(`❌ [BROADCAST] Player ${userId} not found in game state`);
+    console.log(`[BROADCAST] Player ${userId} not found in game state`);
     return;
   }
 
-  // Find who has the current turn - handle undefined case
   const currentTurnPlayer = Object.values(gameState.players).find(p => p.isCurrent);
   
   if (!currentTurnPlayer) {
+    console.log(`[BROADCAST] No current turn player found for game ${gameId}`);
     return;
   }
 
@@ -42,9 +42,10 @@ export const broadcastGameState = async (
     buildPiles: gameState.buildPiles,
     currentBet: gameState.currentBet,
     currentRound: gameState.currentRound,
+    totalPot: gameState.totalPot,
+    grandTotalPot: gameState.grandTotalPot,
     turnInfo: gameState.turnInfo
   };
-
 
   io.to(userIdStr).emit(`game:${gameId}:updated`, playerGameState);
 };

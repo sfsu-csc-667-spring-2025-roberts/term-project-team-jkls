@@ -1102,3 +1102,40 @@ body {
     opacity: 1;
   }
 }
+
+#total-pot {
+  font-family: "Russo One", sans-serif;
+  font-size: 0.9em;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+#total-pot.medium-pot {
+  color: #ffd700;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+#total-pot.big-pot {
+  color: #ff6b6b;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.7);
+  animation: pot-pulse 2s infinite;
+}
+
+@keyframes pot-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.status-row:has(#total-pot) {
+  background-color: rgba(255, 139, 119, 0.15);
+  border-radius: 5px;
+  padding: 8px 5px;
+  border: 1px solid rgba(255, 139, 119, 0.3);
+}
