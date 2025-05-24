@@ -17,7 +17,7 @@ router.post("/register", async (request: Request, response: Response) => {
         const user = await User.register(email, password);
 
         // @ts-ignore
-        request.session.user = user; // Store user in session
+        request.session.user = user;
 
 
         response.redirect("/lobby")
@@ -39,9 +39,9 @@ router.post("/login", async (request: Request, response: Response) => {
         const user = await User.login(email, password);
 
          // @ts-ignore
-         request.session.user = user; // Store user in session
+         request.session.user = user;
 
-         console.log("User ID:", user); // Log the user ID for debugging
+         console.log("User ID:", user);
 
          console.log("SUCCESSFUL LOGIN")
 
@@ -53,7 +53,7 @@ router.post("/login", async (request: Request, response: Response) => {
 
 router.get("/logout", async (request: Request, response: Response) => {
     // @ts-ignore
-    request.session.user = null; // Clear user from session
+    request.session.user = null;
 
     request.session.destroy(() => {
         response.redirect("/")

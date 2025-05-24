@@ -53,7 +53,7 @@ app.use("/auth", routes.auth);
 app.use("/chat", middleware.auth, routes.chat);
 app.use("/lobby", middleware.auth, routes.lobby);
 app.use("/games", middleware.auth, routes.games);
-app.use("/balance", middleware.auth, balanceRoutes); // Add this line
+app.use("/balance", middleware.auth, balanceRoutes);
 
 app.use((_request, _response, next) => {
   next(httpErrors(404));

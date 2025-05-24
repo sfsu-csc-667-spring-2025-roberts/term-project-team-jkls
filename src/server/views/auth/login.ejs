@@ -38,7 +38,6 @@
             const passwordInput = document.getElementById("password");
             const loginButton = document.querySelector(".login-button");
 
-            // Enable the button only if both fields are filled
             function toggleLoginButton() {
                 loginButton.disabled = !(emailInput.value && passwordInput.value);
             }

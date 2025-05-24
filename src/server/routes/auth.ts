@@ -30,7 +30,7 @@ router.post("/register", upload.single("profilePic"), async (request: Request, r
         const user = await User.register(email, password, username, profilePic);
 
         // @ts-ignore
-        request.session.user = user; // Store user in session
+        request.session.user = user;
 
 
         response.redirect("/lobby")
@@ -52,7 +52,7 @@ router.post("/login", async (request: Request, response: Response) => {
         const user = await User.login(email, password);
 
          // @ts-ignore
-         request.session.user = user; // Store user in session
+         request.session.user = user;
 
          response.redirect("/lobby")
          console.log("Redirecting to /lobby")
@@ -63,7 +63,7 @@ router.post("/login", async (request: Request, response: Response) => {
 
 router.get("/logout", async (request: Request, response: Response) => {
     // @ts-ignore
-    request.session.user = null; // Clear user from session
+    request.session.user = null;
 
     request.session.destroy(() => {
         response.redirect("/")

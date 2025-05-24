@@ -1,4 +1,4 @@
-import { Request, Response } from "express";  // Make sure these are from express
+import { Request, Response } from "express";
 import { Game } from "../../db";
 
 export const validatePassword = async (request: Request, response: Response) => {

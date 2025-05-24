@@ -49,7 +49,7 @@ export const endTurn = async (gameId: number, io: Server): Promise<void> => {
   const currentPlayerIndex = players.findIndex(p => p.is_current);
   
   if (currentPlayerIndex === -1) {
-    console.log(`❌ [END TURN] No current player found!`);
+    console.log(`[END TURN] No current player found!`);
     return;
   }
   

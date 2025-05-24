@@ -11,18 +11,15 @@ export const configureSocketEvents = () => {
   
 
   socket.on(`game:${gameId}:updated`, (gameState: PlayerGameState) => {
-    // Remove waiting overlay
     if (UI.OVERLAY?.parentElement) {
       UI.OVERLAY.parentElement.removeChild(UI.OVERLAY);
     }
 
-    // Show game status overlay when game starts
     const statusOverlay = document.getElementById('game-status-overlay');
     if (statusOverlay) {
       statusOverlay.classList.add('visible');
     }
 
-    // Update play area to show it has started
     if (UI.PLAY_AREA) {
       UI.PLAY_AREA.classList.add('started', 'play-area-after-start');
       UI.PLAY_AREA.classList.remove('play-area-before-start');
@@ -37,7 +34,6 @@ export const configureSocketEvents = () => {
       ),
     );
 
-    // Update timer from game state if available
     if (gameState.turnInfo && gameState.turnInfo.secondsLeft > 0) {
       updateTurnTimer(gameState.turnInfo.secondsLeft, gameState.turnInfo.totalSeconds);
     }

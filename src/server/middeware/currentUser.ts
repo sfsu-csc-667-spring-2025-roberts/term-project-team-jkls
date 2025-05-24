@@ -1,4 +1,3 @@
-// src/server/middleware/currentUser.ts
 import { Request, Response, NextFunction } from "express";
 
 export default function currentUser(
