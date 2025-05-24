@@ -125,6 +125,8 @@ export const getState = async (gameId: number): Promise<GameState> => {
     players: playerInfo,
     currentBet: betInfo.currentBet,
     currentRound: betInfo.currentRound,
+    totalPot: betInfo.totalPot,
+    grandTotalPot: betInfo.grandTotalPot,
     turnInfo: await db.oneOrNone(
       `SELECT 
         turn_start_time, 

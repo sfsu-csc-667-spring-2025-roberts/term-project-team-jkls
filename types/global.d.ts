@@ -74,6 +74,8 @@ export type GameState = {
   players: Record<string, PlayerInfo>;
   currentBet: number;
   currentRound: number;
+  totalPot: number;
+  grandTotalPot: number;
   turnInfo: TurnTimerInfo;
 };
 
@@ -84,6 +86,8 @@ export type PlayerGameState = {
   buildPiles: Card[];
   currentBet: number;
   currentRound: number;
+  totalPot: number;
+  grandTotalPot: number;
   turnInfo: TurnTimerInfo;
 };
 

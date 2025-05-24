@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { Game } from "../../db";
 import db from "../../db/connection";
-import { broadcastGameStateToPlayer } from "./broadcast-game-state";
+import { broadcastGameStateToAll } from "./broadcast-game-state";
 import { canAffordBet, updateUserBalance } from "../../services/balance-refill";
+import { endTurn } from "../../services/turn-timer";
 
 export const bet = async (request: Request, response: Response) => {
   const { gameId } = request.params;
@@ -49,23 +50,21 @@ export const bet = async (request: Request, response: Response) => {
     );
     
     const io = request.app.get("io");
+    
+    // Emit bet event
     io.to(`game:${gameId}`).emit(`game:${gameId}:bet`, {
       userId,
       amount,
       newBalance,
       timestamp: new Date()
     });
-    
-    // Broadcast updated game state to all players
-    await Promise.all(
-      players.map(player => 
-        broadcastGameStateToPlayer(parseInt(gameId), `${player.id}`, io)
-      )
-    );
+        
+    // Automatically end the turn after betting
+    await endTurn(parseInt(gameId), io);
     
     return response.json({ 
       success: true, 
-      message: "Bet placed successfully",
+      message: "Bet placed and turn ended",
       newBalance
     });
     

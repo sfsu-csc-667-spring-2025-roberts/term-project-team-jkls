@@ -21,6 +21,8 @@ interface PlayerGameState {
   buildPiles: any;
   currentBet: number;
   currentRound: number;
+  totalPot: number;
+  grandTotalPot: number;
   turnInfo: any;
 }
 
@@ -39,7 +41,7 @@ export const broadcastGameStateToPlayer = async (
 
   // Find who has the current turn
   const currentTurnPlayer = Object.values(gameState.players).find(p => p.isCurrent);
-
+  
   const players: Record<string, OtherPlayerInfo> = {};
   Object.keys(gameState.players)
     .filter((key) => key !== userId)
@@ -58,6 +60,8 @@ export const broadcastGameStateToPlayer = async (
     buildPiles: gameState.buildPiles,
     currentBet: gameState.currentBet,
     currentRound: gameState.currentRound,
+    totalPot: gameState.totalPot,
+    grandTotalPot: gameState.grandTotalPot,
     turnInfo: gameState.turnInfo
   };
 

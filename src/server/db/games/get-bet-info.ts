@@ -18,9 +18,25 @@ export const getBetInfo = async (gameId: number) => {
     return bets;
   });
 
+  const totalPot = await db.oneOrNone(
+    `SELECT COALESCE(SUM(amount), 0) as total_pot 
+     FROM game_bets 
+     WHERE game_id = $1 AND round = $2`,
+    [gameId, current_round]
+  ).then(result => parseInt(result?.total_pot || 0));
+
+  const grandTotalPot = await db.oneOrNone(
+    `SELECT COALESCE(SUM(amount), 0) as grand_total 
+     FROM game_bets 
+     WHERE game_id = $1`,
+    [gameId]
+  ).then(result => parseInt(result?.grand_total || 0));
+
   return {
     currentBet: parseInt(current_bet),
     currentRound: parseInt(current_round),
-    playerBets
+    playerBets,
+    totalPot,
+    grandTotalPot
   };
 };
