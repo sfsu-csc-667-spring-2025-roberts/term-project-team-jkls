@@ -39,7 +39,6 @@ export const broadcastGameStateToPlayer = async (
     return;
   }
 
-  // Find who has the current turn
   const currentTurnPlayer = Object.values(gameState.players).find(p => p.isCurrent);
   
   const players: Record<string, OtherPlayerInfo> = {};

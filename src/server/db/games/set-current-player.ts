@@ -8,7 +8,6 @@ WHERE game_id = $1`;
 export const setCurrentPlayer = async (gameId: number, userId: number) => {  
   const result = await db.result(SQL, [gameId, userId]);
   
-  // Verify the update worked
   const verification = await db.many(
     `SELECT user_id, is_current FROM game_users WHERE game_id = $1`,
     [gameId]

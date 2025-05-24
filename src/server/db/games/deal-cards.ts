@@ -24,7 +24,6 @@ WHERE  game_id = $(gameId)
       );
 `;
 
-/* ── 2. COUNT remaining cards in **this** game’s deck ───────────── */
 const AVAILABLE_CARD_COUNT = `
 SELECT COUNT(*)
 FROM   game_cards
@@ -36,7 +35,6 @@ WHERE  game_id = $(gameId)
   );
 `;
 
-/* rest of the file stays the same */
 export const dealCards = async (
   userId: number,
   gameId: number,
